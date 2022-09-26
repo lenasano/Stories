@@ -1,16 +1,69 @@
 ﻿@page "/counter"
 
-<h1>Counter</h1>
+@using System.IO 
 
-<p>Current count: @currentCount</p>
+<h1>Add New Story</h1>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<EditForm Model="@story" OnInvalidSubmit="@AddStory">
+    <InputTextArea @ref="inputTextArea" class="form-control" @bind-Value="story.StoryText" rows="20"></InputTextArea>
+    <br />
+    <button class="btn btn-primary" type="submit">Add</button>
+</EditForm>
+
+@if (imgUrl != string.Empty)
+{
+    <img src="@imgUrl">
+}
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
+    public class StoryModel
     {
-        currentCount++;
+        public string? StoryText { get; set; }
     }
+
+
+    InputTextArea inputTextArea;
+    string imgUrl = string.Empty;
+    private StoryModel story = new();
+
+    int PNG_WIDTH = 300;
+    int PNG_CHARS_PER_ROW = 30;
+
+    private void AddStory()
+    {
+        // this is no good. runtime error: Unhandled exception rendering component: System.Drawing.Common is not supported on this platform.
+        // ConvertTextToImage(txt, "Bookman Old Style", 10, Color.SandyBrown, Color.Black, PNG_WIDTH, PNG_CHARS_PER_ROW);
+
+        // This is because System.Drawing.Common relies on GDI+, which is low level Windows OS functionality, so it is not suitable for web apps.
+        // (See https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only.)
+        // Third party alternatives may also exist, e.g. https://blog.aspose.com/2022/05/21/use-system-drawing-blazor-webassembly-app-csharp/
+    }
+
+    /* Below is the System.Drawing.Common way (runtime error, see above)
+
+    public void ConvertTextToImage(string txt, string fontname, int fontsize, Color bgcolor, Color fcolor, int width, int Height)
+    {
+        Bitmap bmp = new Bitmap(width, Height);
+        using (Graphics graphics = Graphics.FromImage(bmp))
+        {
+
+            Font font = new Font(fontname, fontsize);
+            graphics.FillRectangle(new SolidBrush(bgcolor), 0, 0, bmp.Width, bmp.Height);
+            graphics.DrawString(txt, font, new SolidBrush(fcolor), 0, 0);
+            graphics.Flush();
+            font.Dispose();
+            graphics.Dispose();
+        }
+
+        using (MemoryStream ms = new MemoryStream())
+        {
+            bmp.Save(ms, ImageFormat.Png);
+            byte[] byteArray = ms.ToArray();
+            var b64String = Convert.ToBase64String(byteArray);
+            string imgUrl = "data:image/png;base64," + b64String;
+        }
+    }
+
+    */
 }
