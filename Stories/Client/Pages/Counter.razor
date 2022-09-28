@@ -2,6 +2,9 @@
 
 @using System.IO
 @using System.Text.Json
+@using System.Net.Http.Headers
+
+@using Stories.Shared
 
 @inject HttpClient http
 
@@ -29,10 +32,13 @@
     <img src="@imgUrl">
 }
 
-<br />
+<p />
 
 <EditForm Model="@story" OnSubmit="@AddStoryAsync">
-    <InputTextArea @ref="inputTextArea" class="form-control" @bind-Value="story.StoryText" rows="20"></InputTextArea>
+
+    <InputText class="form-control" @bind-Value="story.StoryTitle" />
+    <InputTextArea class="form-control" @bind-Value="story.StoryText" rows="20" />
+
     <br />
     <button class="btn btn-primary" type="submit">Add</button>
 </EditForm>
@@ -42,17 +48,12 @@
 
     public class StoryModel
     {
-        public string? StoryText { get; set; }
+        public string StoryTitle { get; set; }
+        public string StoryText  { get; set; }
     }
 
 
     private StoryModel story = new();
-
-    int PNG_WIDTH = 300;
-    int PNG_CHARS_PER_ROW = 30;
-
-
-    InputTextArea inputTextArea;
 
 
     string imgUrl = string.Empty;
@@ -78,9 +79,9 @@
             string r = await response.Content.ReadAsStringAsync();
             imgUrl = JsonSerializer.Deserialize<Dictionary<string, string>>(r)["direct_link"];
 
-            bootstrapAlertType = "alert-success";
-            statusMessage = imgUrl;
+            await PostStoryToServerAsync();
 
+            story.StoryTitle = string.Empty;
             story.StoryText = string.Empty;
         }
         else
@@ -91,4 +92,25 @@
     }
 
     private int Min(int first, int second) => first < second ? first : second;
+
+    private async Task PostStoryToServerAsync()
+    {
+        StringContent postRequestBody =
+            new (
+                string.Join(
+                    Environment.NewLine,
+                    story.StoryTitle,
+                    imgUrl,
+                    story.StoryText
+                )
+            );
+
+        HttpResponseMessage result = await http.PostAsync("/Filesave", postRequestBody);
+
+        if( result.IsSuccessStatusCode )
+        {
+            bootstrapAlertType = "alert-success";
+            statusMessage = imgUrl;
+        }
+    }
 }
