@@ -27,7 +27,7 @@ public class FilesaveController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<IList<UploadResult>>> SaveFileAsync()
+    public async Task<ActionResult<IList<UploadedStory>>> SaveFileAsync()
     {
         try
         {
