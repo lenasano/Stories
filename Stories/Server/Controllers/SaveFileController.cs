@@ -12,15 +12,15 @@ using System.Text;
 
 [ApiController]
 [Route("[controller]")]
-public class FilesaveController : ControllerBase
+public class SaveFileController : ControllerBase
 {
     private readonly IWebHostEnvironment env;
-    private readonly ILogger<FilesaveController> logger;
+    private readonly ILogger<SaveFileController> logger;
 
     private static string UPLOAD_FOLDERNAME = "unsafe_uploads";
 
-    public FilesaveController(IWebHostEnvironment env,
-        ILogger<FilesaveController> logger)
+    public SaveFileController(IWebHostEnvironment env,
+        ILogger<SaveFileController> logger)
     {
         this.env = env;
         this.logger = logger;
