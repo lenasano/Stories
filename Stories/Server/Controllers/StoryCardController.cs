@@ -13,7 +13,7 @@ public class StoryCardController : ControllerBase
         // reference: https://stackoverflow.com/questions/9541351/returning-binary-file-from-controller-in-asp-net-web-api?rq=1
 
         string schemaPath = Path.Combine(
-            Directory.GetCurrentDirectory(), "StoryCardSchema.json"
+            Directory.GetCurrentDirectory(), "StoryCardSchema.json" // "WeatherCardSchema.json" //
         );
 
         FileStream stream = new FileStream(schemaPath, FileMode.Open, FileAccess.Read);

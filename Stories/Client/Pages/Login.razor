@@ -1,12 +1,11 @@
 ﻿@page "/login"
 
 @inject HttpClient http
-
 <!-- created cards for stories using AdaptiveCardsBlazor NuGet package (MIT licensed), see also https://www.adaptivecardsblazor.com/gettingstarted.html -->
 
 <h1>Hello Adaptive Cards for Blazor!</h1>
 
-Here's a card for displaying the weather:
+Here's a card for displaying a story:
 
 <p></p>
 
@@ -14,21 +13,28 @@ Here's a card for displaying the weather:
 
 <p></p>
 
+
 <div class="row">
-    <div class="col-3">
-        <AdaptiveCard Schema="@schema"></AdaptiveCard>
-    </div>
+    @for (int j = 0; j < 3; j++)
+    {
+        @for (int i = 0; i < 4; i++)
+        {
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                <AdaptiveCard Schema="@schema"></AdaptiveCard>
+            </div>
+        }
+    }
 </div>
 
-@code {
-    string schema = string.Empty;
+    @code {
+        string schema = string.Empty;
 
-    protected override async Task OnInitializedAsync()
-    {
-        HttpResponseMessage response = await http.GetAsync("StoryCard");
+        protected override async Task OnInitializedAsync()
+        {
+            HttpResponseMessage response = await http.GetAsync("StoryCard");
 
-        schema = await response.Content.ReadAsStringAsync();
+            schema = await response.Content.ReadAsStringAsync();
 
-        string s = response.StatusCode.ToString();
+            string s = response.StatusCode.ToString();
+        }
     }
-}
