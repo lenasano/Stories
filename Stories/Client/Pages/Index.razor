@@ -1,48 +1,41 @@
 ﻿@page "/"
 
-@using Stories.Shared 
-
 @inject HttpClient http
 
-<h1>Weather forecast</h1>
+<!-- created cards for stories using AdaptiveCardsBlazor NuGet package (MIT licensed), see also https://www.adaptivecardsblazor.com/gettingstarted.html -->
 
-<p>This component demonstrates fetching data from the server.</p>
+<h1>John's Stories</h1>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+Here are all the stories:
+
+<p></p>
+
+@schema
+
+<p></p>
+
+
+<div class="row">
+    @for (int j = 0; j < 3; j++)
+    {
+        @for (int i = 0; i < 4; i++)
+        {
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                <AdaptiveCard Schema="@schema"></AdaptiveCard>
+            </div>
+        }
+    }
+</div>
 
 @code {
-    private WeatherForecast[] forecasts;
+    string schema = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
-    }
+        HttpResponseMessage response = await http.GetAsync("AdaptiveCard?cardtype=story");
 
+        schema = await response.Content.ReadAsStringAsync();
+
+        string s = response.StatusCode.ToString();
+    }
 }
