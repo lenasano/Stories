@@ -5,7 +5,7 @@
 
 <h1>Hello Adaptive Cards for Blazor!</h1>
 
-Here's a card for displaying a story:
+Here's a card for logging in, if you are John:
 
 <p></p>
 
@@ -14,27 +14,21 @@ Here's a card for displaying a story:
 <p></p>
 
 
-<div class="row">
-    @for (int j = 0; j < 3; j++)
-    {
-        @for (int i = 0; i < 4; i++)
-        {
-            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                <AdaptiveCard Schema="@schema"></AdaptiveCard>
-            </div>
-        }
-    }
+<div class="row row d-flex justify-content-center">
+    <div class="col-sm-9 col-md-8 col-lg-7 col-xl-6">
+        <AdaptiveCard Schema="@schema"></AdaptiveCard>
+    </div>
 </div>
 
-    @code {
-        string schema = string.Empty;
+@code {
+    string schema = string.Empty;
 
-        protected override async Task OnInitializedAsync()
-        {
-            HttpResponseMessage response = await http.GetAsync("StoryCard");
+    protected override async Task OnInitializedAsync()
+    {
+        HttpResponseMessage response = await http.GetAsync("AdaptiveCard?cardtype=login");
 
-            schema = await response.Content.ReadAsStringAsync();
+        schema = await response.Content.ReadAsStringAsync();
 
-            string s = response.StatusCode.ToString();
-        }
+        string s = response.StatusCode.ToString();
     }
+}
