@@ -45,30 +45,9 @@
       "url": "https://adaptivecards.io"
     },
     {
-      "type": "Action.ShowCard",
+      "type": "Action.OpenUrl",
       "title": "Download as PNG",
-      "card": {
-        "type": "AdaptiveCard",
-        "body": [
-          {
-            "type": "Input.Date",
-            "id": "dueDate"
-          },
-          {
-            "type": "Input.Text",
-            "id": "comment",
-            "placeholder": "Add a comment",
-            "isMultiline": true
-          }
-        ],
-        "actions": [
-          {
-            "type": "Action.Submit",
-            "title": "OK"
-          }
-        ],
-        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
-      }
+      "url": "https://weather.com"
     }
   ],
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

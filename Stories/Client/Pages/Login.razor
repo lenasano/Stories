@@ -1,5 +1,7 @@
 ﻿@page "/login"
 
+@using AdaptiveCards.Blazor.Actions 
+
 @inject HttpClient http
 <!-- created cards for stories using AdaptiveCardsBlazor NuGet package (MIT licensed), see also https://www.adaptivecardsblazor.com/gettingstarted.html -->
 
@@ -13,18 +15,12 @@ Here's a card for logging in, if you are John:
 
 <p></p>
 
-
 <div class="row row d-flex justify-content-center">
     <div class="col-sm-9 col-md-8 col-lg-7 col-xl-6">
-        <AdaptiveCard Schema="@schema"></AdaptiveCard>
+        <AdaptiveCard Schema="@schema"  SubmitHandler="this"></AdaptiveCard>
     </div>
-        {
-            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                <AdaptiveCard Schema="@schema"></AdaptiveCard>
-            </div>
-        }
-    }
 </div>
+
 
 @code {
     string schema = string.Empty;
@@ -36,5 +32,10 @@ Here's a card for logging in, if you are John:
         schema = await response.Content.ReadAsStringAsync();
 
         string s = response.StatusCode.ToString();
+    }
+
+    public Task Submit(string LoginVal)// UserVal, string PassVal)
+    {
+        return Task.CompletedTask;      // seems weird - is this meant to be an async function?
     }
 }
