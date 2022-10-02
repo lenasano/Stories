@@ -25,7 +25,7 @@ public class SaveFileController : ControllerBase
 
     private static string UPLOAD_FOLDERNAME = "unsafe_uploads";
 
-    private static int IMAGE_WIDTH = 120;
+    private static int IMAGE_WIDTH = 800;
 
     public SaveFileController(IWebHostEnvironment env,
         ILogger<SaveFileController> logger)
@@ -75,7 +75,7 @@ public class SaveFileController : ControllerBase
 
     public static void SaveTextAsImage(string text, ImageFormat f)
     {
-        text = "The purpose of this challenge is to gather further evidence of the true abilities and qualifications of potential candidates for employment in Crawford Technologies software engineering division than would normally be possible via a simple interview. \nThe prospective employee is asked to take the enclosed project requirements and return to Crawford a functionally complete, working piece of software, for review by Crawford Technologies Management and Technical staff.Crawford’s staff will use this to evaluate the design decisions made by the prospective employee, as well as the craftsmanship and quality of the code and the project returned.This project will have a significant impact on the applicant selection process.Please take this opportunity to demonstrate for Crawford Technologies your skills in software engineering".Trim();
+        text = "The purpose of this challenge is to gather further evidence of the true abilities and qualifications of potential candidates for employment in Crawford Technologies software engineering division than would normally be possible via a simple interview.\r\nThe prospective employee is asked to take the enclosed project requirements and return to Crawford a functionally complete, working piece of software, for review by Crawford Technologies Management and Technical staff. Crawford’s staff will use this to evaluate the design decisions made by the prospective employee, as well as the craftsmanship and quality of the code and the project returned. This project will have a significant impact on the applicant selection process.Please take this opportunity to demonstrate for Crawford Technologies your skills in software engineering".Trim();
 
 
         Bitmap bitmap = new (1, 1);
@@ -83,30 +83,27 @@ public class SaveFileController : ControllerBase
         // Create a graphics object to measure the text's width and height.
         Graphics g = Graphics.FromImage(bitmap);
 
-
-        // Set Background color
-        g.Clear(Color.White);
-        g.SmoothingMode = SmoothingMode.AntiAlias;
-        g.TextRenderingHint = TextRenderingHint.AntiAlias;
-
         // Create the Font object for the image text drawing.
-        Font font = new("Calibri Light", 20, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+        Font font = new("Calibri", 30, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 
         // Add text wrapping to the string.
-        string wrappedString = WrapTextWithGraphics( g, text + ' ', IMAGE_WIDTH, font);
+        string wrappedString = WrapTextWithGraphics(g, text + ' ', IMAGE_WIDTH, font);
 
         // Measure string.
-        SizeF stringSize = g.MeasureString(wrappedString, font);
+        SizeF stringSize = g.MeasureString(wrappedString, font) + new Size(20,20);
 
         // Create the bmpImage again with the correct size for the text and font.
         bitmap = new Bitmap(bitmap, Size.Round(stringSize) );
         g = Graphics.FromImage(bitmap);
 
+        // Set background color.
+        g.Clear(Color.White);
+
         // Draw rectangle representing size of string.
-        g.DrawRectangle(new Pen(Color.Azure, 1), 0.0F, 0.0F, stringSize.Width, stringSize.Height);
+        g.DrawRectangle(new Pen(Color.SteelBlue, 3), 1, 1, stringSize.Width - 3, stringSize.Height - 3);
 
         // Draw string to screen.
-        g.DrawString(wrappedString, font, Brushes.Black, new PointF(0, 0));
+        g.DrawString(wrappedString, font, Brushes.Black, new PointF(10, 10));
 
         g.Flush();
         // ? g.Dispose();
