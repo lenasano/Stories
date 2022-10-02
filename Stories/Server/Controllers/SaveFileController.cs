@@ -15,6 +15,7 @@ using System.Drawing.Text;
 using System.Drawing.Drawing2D;
 
 using System.Linq;
+using System.Text.RegularExpressions;
 
 [ApiController]
 [Route("[controller]")]
@@ -75,7 +76,7 @@ public class SaveFileController : ControllerBase
 
     public static void SaveTextAsImage(string text, ImageFormat f)
     {
-        text = "The purpose of this challenge is to gather further evidence of the true abilities and qualifications of potential candidates for employment in Crawford Technologies software engineering division than would normally be possible via a simple interview.\r\nThe prospective employee is asked to take the enclosed project requirements and return to Crawford a functionally complete, working piece of software, for review by Crawford Technologies Management and Technical staff. Crawford’s staff will use this to evaluate the design decisions made by the prospective employee, as well as the craftsmanship and quality of the code and the project returned. This project will have a significant impact on the applicant selection process.Please take this opportunity to demonstrate for Crawford Technologies your skills in software engineering".Trim();
+        text = PrepareStringForConversion(text);
 
 
         Bitmap bitmap = new (1, 1);
@@ -84,7 +85,7 @@ public class SaveFileController : ControllerBase
         Graphics g = Graphics.FromImage(bitmap);
 
         // Create the Font object for the image text drawing.
-        Font font = new("Calibri", 30, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+        Font font = new ("Calibri", 30, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 
         // Add text wrapping to the string.
         string wrappedString = WrapTextWithGraphics(g, text + ' ', IMAGE_WIDTH, font);
@@ -92,25 +93,43 @@ public class SaveFileController : ControllerBase
         // Measure string.
         SizeF stringSize = g.MeasureString(wrappedString, font) + new Size(20,20);
 
+
+        //bitmap.Dispose();   // todo: not needed?
+        g.Dispose();
+
+
         // Create the bmpImage again with the correct size for the text and font.
-        bitmap = new Bitmap(bitmap, Size.Round(stringSize) );
+        bitmap = new (bitmap, Size.Round(stringSize) );
         g = Graphics.FromImage(bitmap);
 
         // Set background color.
         g.Clear(Color.White);
 
+        Pen p = new (Color.SteelBlue, 3);
         // Draw rectangle representing size of string.
-        g.DrawRectangle(new Pen(Color.SteelBlue, 3), 1, 1, stringSize.Width - 3, stringSize.Height - 3);
+        g.DrawRectangle(p, 1, 1, stringSize.Width - 3, stringSize.Height - 3);
 
         // Draw string to screen.
         g.DrawString(wrappedString, font, Brushes.Black, new PointF(10, 10));
 
         g.Flush();
-        // ? g.Dispose();
-
         string fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + ".png";
 
         bitmap.Save( Path.Combine( Environment.CurrentDirectory, UPLOAD_FOLDERNAME, fileName), f);
+
+
+        //p.Dispose();
+        //bitmap.Dispose();
+        g.Dispose();
+    }
+
+    private static string PrepareStringForConversion(string text)
+    {
+        text = Regex.Replace(text.Trim(), @"\r\n?|\n", "\r\n");             // replace unix style line endings ('\n') with windows style ones ('\r\n')
+
+        if (text.Length > 1200) text = text.Substring(0, 1200).Trim();      // should never happen (as we already check string length on the client), but just a safety
+
+        return text;
     }
 
     /// <summary>
@@ -128,14 +147,14 @@ public class SaveFileController : ControllerBase
     /// </summary>
     /// 
     /// <param name="g">A graphics object, used for measuring line lengths</param>
-    /// <param name="original">The string to wrap. This string must end with a space (' ') or newline.</param>
+    /// <param name="original">The string to wrap. This string must end with a space (' ') and must contain \r\n newline characters.</param>
     /// <param name="width">The desired line width in pixels</param>
     /// <param name="font">The font to be applied to the text</param>
     /// <param name="wrappedLines">Used for recursive steps. The incremental list of lines of wrapped text.</param>
     /// <param name="start">Used for recursive steps. The character position for the current iteration.</param>
     /// 
     /// <returns>The string with <see cref="Environment.NewLine"/> inserted.</returns>
-    
+
     public static string WrapTextWithGraphics(in Graphics g, string original, in int width, in Font font, List<string> wrappedLines = null, int start = 0) 
     {
         if (wrappedLines is null) wrappedLines = new();                 // happens in the first iteration
@@ -143,7 +162,12 @@ public class SaveFileController : ControllerBase
 
         //  _base case_:  empty string or reached the end
 
-        if ( start + 1 >= original.Length ) return string.Join(Environment.NewLine, wrappedLines);
+        if (start + 1 >= original.Length)
+        {
+            wrappedLines.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+            return string.Join(Environment.NewLine, wrappedLines);
+        }
 
 
 

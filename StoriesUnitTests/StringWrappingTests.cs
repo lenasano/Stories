@@ -25,9 +25,9 @@ namespace StoriesUnitTests
         {
             string actualResult =
                 SaveFileController.WrapTextWithGraphics(
-                    Graphics.FromImage(new Bitmap(1,1)), 
-                    "Hello this is a very long string, how long can it go? No one can say... okay, let's finish here. ", 
-                    300, 
+                    Graphics.FromImage(new Bitmap(1, 1)),
+                    "Hello this is a very long string, how long can it go? No one can say... okay, let's finish here. ",
+                    300,
                     new Font("Calibri Light", 20, FontStyle.Regular, GraphicsUnit.Pixel)
                 );
 
@@ -51,7 +51,7 @@ namespace StoriesUnitTests
         [Test]
         public void TestNull()
         {
-            string actualResult = 
+            string actualResult =
                 SaveFileController.WrapTextWithGraphics(
                     g,
                     null,

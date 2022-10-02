@@ -36,8 +36,8 @@
 
 <EditForm Model="@story" OnSubmit="@AddStoryAsync">
 
-    <InputText class="form-control" @bind-Value="story.StoryTitle" />
-    <InputTextArea class="form-control" @bind-Value="story.StoryText" rows="20" />
+    <InputText class="form-control" @bind-Value="story.Title" />
+    <InputTextArea class="form-control" @bind-Value="story.Text" rows="20" />
 
     <br />
     <button class="btn btn-primary" type="submit">Add</button>
@@ -48,8 +48,8 @@
 
     public class StoryModel
     {
-        public string StoryTitle { get; set; }
-        public string StoryText  { get; set; }
+        public string Title { get; set; }
+        public string Text  { get; set; }
     }
 
 
@@ -65,13 +65,13 @@
 
     private async Task AddStoryAsync()
     {
-        if (string.IsNullOrEmpty(story.StoryText)) return;
+        if (string.IsNullOrEmpty(story.Text)) return;
 
         // todo: remove < > from string
 
         HttpResponseMessage response =
             await http.GetAsync(
-                "https://api.imgbun.com/png?key=f47fb593fd54e825bb029ad9e1d8deab&text=" + story.StoryText.Substring(0, Min(499, story.StoryText.Length))
+                "https://api.imgbun.com/png?key=f47fb593fd54e825bb029ad9e1d8deab&text=" + story.Text.Substring(0, Min(499, story.Text.Length))
             );
 
         if (response.IsSuccessStatusCode)
@@ -81,8 +81,8 @@
 
             await PostStoryToServerAsync();
 
-            story.StoryTitle = string.Empty;
-            story.StoryText = string.Empty;
+            story.Title = string.Empty;
+            story.Text  = string.Empty;
         }
         else
         {
@@ -95,15 +95,29 @@
 
     private async Task PostStoryToServerAsync()
     {
-        StringContent postRequestBody =
-            new (
-                string.Join(
-                    Environment.NewLine,
-                    story.StoryTitle,
-                    imgUrl,
-                    story.StoryText
-                )
+
+        string storytext  = story.Text.Trim();
+        string storytitle = story.Title.Trim();
+
+
+        if (storytext.Length > 1000)
+            storytext = string.Concat(
+                storytext.Substring(0, 1000),
+                Environment.NewLine,
+                Environment.NewLine,
+                "... We're sorry, this story exceeded the maximum length for images (1000 characters). Please read the story ending online."
             );
+
+
+        StringContent postRequestBody =
+        new (
+            string.Join(
+                Environment.NewLine,
+                storytitle,
+                imgUrl,
+                storytext
+            )
+        );
 
         HttpResponseMessage result = await http.PostAsync("SaveFile", postRequestBody);
 
