@@ -74,6 +74,8 @@ public class SaveFileController : ControllerBase
         }
     }
 
+    // TODO: consider converting this function to async
+
     public static void SaveTextAsImage(string text, ImageFormat f)
     {
         text = PrepareStringForConversion(text);
