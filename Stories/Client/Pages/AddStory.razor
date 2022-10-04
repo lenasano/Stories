@@ -55,6 +55,8 @@
 
     private StoryModel story = new();
 
+    const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2000;
+
 
     string imgUrl = string.Empty;
 
@@ -101,12 +103,12 @@
         string storytitle = story.Title.Trim();
 
 
-        if (storytext.Length > 1000)
+        if (storytext.Length > STORY_TEXT_MAX_CHARACTER_LENGTH)
             storytext = string.Concat(
-                storytext.Substring(0, 1000),
+                storytext.Substring(0, STORY_TEXT_MAX_CHARACTER_LENGTH),
                 Environment.NewLine,
                 Environment.NewLine,
-                "... We're sorry, this story exceeded the maximum length for images (1000 characters). Please read the story ending online."
+                $"... We're sorry, this story exceeded the maximum length for images ({STORY_TEXT_MAX_CHARACTER_LENGTH} characters). Please read the story ending online."
             );
 
 

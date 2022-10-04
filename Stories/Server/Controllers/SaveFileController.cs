@@ -26,7 +26,8 @@ public class SaveFileController : ControllerBase
 
     private static string UPLOAD_FOLDERNAME = "unsafe_uploads";
 
-    private static int IMAGE_WIDTH = 800;
+    private static const int IMAGE_WIDTH = 1000;
+    private static const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2200;
 
     public SaveFileController(IWebHostEnvironment env,
         ILogger<SaveFileController> logger)
@@ -87,7 +88,7 @@ public class SaveFileController : ControllerBase
         Graphics g = Graphics.FromImage(bitmap);
 
         // Create the Font object for the image text drawing.
-        Font font = new ("Calibri", 30, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+        Font font = new ("Calibri", 20, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 
         // Add text wrapping to the string.
         string wrappedString = WrapTextWithGraphics(g, text + ' ', IMAGE_WIDTH, font);
@@ -127,9 +128,10 @@ public class SaveFileController : ControllerBase
 
     private static string PrepareStringForConversion(string text)
     {
-        text = Regex.Replace(text.Trim(), @"\r\n?|\n", "\r\n");             // replace unix style line endings ('\n') with windows style ones ('\r\n')
+        text = Regex.Replace(text.Trim(), @"\r\n?|\n", "\r\n");                     // replace unix style line endings ('\n') with windows style ones ('\r\n')
 
-        if (text.Length > 1200) text = text.Substring(0, 1200).Trim();      // should never happen (as we already check string length on the client), but just a safety
+        if (text.Length > STORY_TEXT_MAX_CHARACTER_LENGTH)
+            text = text.Substring(0, STORY_TEXT_MAX_CHARACTER_LENGTH).Trim();       // should never happen (as we already check string length on the client), but just a safety
 
         return text;
     }
