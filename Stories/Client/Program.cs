@@ -5,8 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using AdaptiveCards.Blazor;
-using AdaptiveCards.Blazor.ActionHandlers;
-using AdaptiveCards.Blazor.Actions;
 using AdaptiveCards.Rendering.Html;
 
 namespace Stories.Client
@@ -19,11 +17,6 @@ namespace Stories.Client
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
-            builder.Services.AddSingleton<AdaptiveOpenUrlActionAdapter>();
-            builder.Services.AddSingleton<AdaptiveCardRenderer>();
-            builder.Services.AddSingleton<ISubmitActionHandler, DefaultSubmitActionHandler>();
-            builder.Services.AddSingleton<BlazorAdaptiveCardsOptions>();
 
             await builder.Build().RunAsync();
         }
