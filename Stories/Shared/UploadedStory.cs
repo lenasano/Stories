@@ -9,8 +9,8 @@ namespace Stories.Shared
     public class UploadedStory
     {
         public bool Uploaded { get; set; }
-        public string FileName { get; set; }
-        public string StoredFileName { get; set; }
+        public string FileName { get; set; } = String.Empty;
+        public string StoredFileName { get; set; } = String.Empty;
         public int ErrorCode { get; set; }
 
         // id, title, text (first paragraph text), imagefilename.png, number of page views, number of downloads

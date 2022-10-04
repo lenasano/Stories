@@ -26,8 +26,8 @@ public class SaveFileController : ControllerBase
 
     private static string UPLOAD_FOLDERNAME = "unsafe_uploads";
 
-    private static const int IMAGE_WIDTH = 1000;
-    private static const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2200;
+    private const int IMAGE_WIDTH = 1000;
+    private const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2200;
 
     public SaveFileController(IWebHostEnvironment env,
         ILogger<SaveFileController> logger)
@@ -159,7 +159,7 @@ public class SaveFileController : ControllerBase
     /// 
     /// <returns>The string with <see cref="Environment.NewLine"/> inserted.</returns>
 
-    public static string WrapTextWithGraphics(in Graphics g, string original, in int width, in Font font, List<string> wrappedLines = null, int start = 0) 
+    public static string WrapTextWithGraphics(in Graphics g, string original, in int width, in Font font, List<string>? wrappedLines = null, int start = 0) 
     {
         if (wrappedLines is null) wrappedLines = new();                 // happens in the first iteration
         if (original is null)     original = string.Empty;              // this might happen in the first iteration, if a null string is passed in on the first call to this function

@@ -48,8 +48,8 @@
 
     public class StoryModel
     {
-        public string Title { get; set; }
-        public string Text  { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Text  { get; set; } = string.Empty;
     }
 
 
@@ -80,7 +80,7 @@
         if (response.IsSuccessStatusCode)
         {
             string r = await response.Content.ReadAsStringAsync();
-            imgUrl = JsonSerializer.Deserialize<Dictionary<string, string>>(r)["direct_link"];
+            imgUrl = JsonSerializer.Deserialize<Dictionary<string, string>>(r)?["direct_link"] ?? string.Empty;
 
             await PostStoryToServerAsync();
 
@@ -90,7 +90,7 @@
         else
         {
             bootstrapAlertType = "alert-danger";
-            statusMessage = response.ReasonPhrase;
+            statusMessage = response.ReasonPhrase ?? string.Empty;
         }
     }
 
