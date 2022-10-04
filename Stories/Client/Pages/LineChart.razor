@@ -92,6 +92,6 @@
                 )
             );
 
-    private string SelectedPointInfo => $"x={_selectedPoint}, y={Values[_selectedPoint.Value]:0.000}";
+    private string SelectedPointInfo => (_selectedPoint is null) ? string.Empty : $"x={_selectedPoint}, y={Values[_selectedPoint.Value]:0.000}";
 
 }

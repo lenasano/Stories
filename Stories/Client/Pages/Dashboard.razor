@@ -44,7 +44,7 @@
 @code
 {
     readonly Random rng = new();
-    List<double> Values;
+    List<double>? Values;
 
     private double Min { get; set; } = -5;
     private double Max { get; set; } = 5;
@@ -70,7 +70,7 @@
         {
             if (!_animate) continue;
 
-            Values = Values.Select(v => v + (0.5 - rng.NextDouble()) / 2).ToList();
+            Values = Values?.Select(v => v + (0.5 - rng.NextDouble()) / 2).ToList();
             StateHasChanged();
         }
     }
