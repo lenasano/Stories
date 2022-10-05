@@ -28,7 +28,7 @@
     </p>
 
     <div>
-        <LineChart Values="@Values" Min="@Min" Max="@Max"/>
+        <LineChart Values="@Values" ValuesSecondary="@ValuesSecondary" Min="@Min" Max="@Max"/>
     </div>
 
     <p>
@@ -45,8 +45,9 @@
 {
     readonly Random rng = new();
     List<double>? Values;
+    List<double>? ValuesSecondary;
 
-    private double Min { get; set; } = -5;
+    private double Min { get; set; } = 0;
     private double Max { get; set; } = 5;
     private int Count { get; set; } = 10;
 
@@ -71,13 +72,15 @@
             if (!_animate) continue;
 
             Values = Values?.Select(v => v + (0.5 - rng.NextDouble()) / 2).ToList();
+            ValuesSecondary = ValuesSecondary?.Select(v => v + (0.5 - rng.NextDouble()) / 2).ToList();
             StateHasChanged();
         }
     }
 
     private void Randomize()
     {
-        Values = Enumerable.Range(1, Count).Select(_ => Min + rng.NextDouble() * (Max + Math.Abs(Min))).ToList();
+        Values          = Enumerable.Range(1, Count).Select(_ => Min + rng.NextDouble() * (Max + Math.Abs(Min))).ToList();
+        ValuesSecondary = Enumerable.Range(1, Count).Select(_ => Min + rng.NextDouble() * (Max + Math.Abs(Min))).ToList();
     }
 
 }

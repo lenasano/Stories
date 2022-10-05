@@ -36,10 +36,18 @@
     </g>
 
     <g>
-        <polyline stroke="steelblue" fill="none" stroke-width="3" points="@PointList"/>
+        <polyline stroke="darkblue"  fill="none" stroke-width="3" points="@PointList" />
+        <polyline stroke="steelblue" fill="none" stroke-width="3" points="@PointListSecondary" />
     </g>
 
     @foreach (var (x, y) in Values.Select((value, index) => (index, value)))
+    {
+        <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="4" fill=@(x == _selectedPoint ? "lightblue" : "black")/>
+        @* Render a transparent circle with a larger radius to provide a proper hitbox *@
+        <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="20" fill="transparent" @onclick=@(_ => _selectedPoint = x)/>
+    }
+
+    @foreach (var (x, y) in ValuesSecondary.Select((value, index) => (index, value)))
     {
         <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="4" fill=@(x == _selectedPoint ? "lightblue" : "black")/>
         @* Render a transparent circle with a larger radius to provide a proper hitbox *@
@@ -59,6 +67,9 @@
 
     [Parameter]
     public List<double> Values { get; set; } = new();
+
+    [Parameter]
+    public List<double> ValuesSecondary { get; set; } = new();
 
     [Parameter]
     public double Max { get; set; }
@@ -88,6 +99,12 @@
     private string PointList =>
         string.Join(" ",
             Values.Select(
+                (y, index) => $"{Xpos(index)},{Ypos(y)}"
+                )
+            );
+    private string PointListSecondary =>
+        string.Join(" ",
+            ValuesSecondary.Select(
                 (y, index) => $"{Xpos(index)},{Ypos(y)}"
                 )
             );
