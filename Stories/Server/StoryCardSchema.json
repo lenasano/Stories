@@ -3,9 +3,9 @@
   "body": [
     {
       "type": "TextBlock",
-      "size": "Medium",
+      "size": "extraLarge",
       "weight": "Bolder",
-      "text": "Publish Adaptive Card Schema",
+      "text": "{Title2}",
       "wrap": true
     },
     {
@@ -17,24 +17,24 @@
             {
               "type": "TextBlock",
               "weight": "Bolder",
-              "text": "Matt Hidinger",
+              "text": "John",
               "wrap": true
             },
             {
               "type": "TextBlock",
               "spacing": "None",
-              "text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
+              "text": "Created {DateCreated}",
               "isSubtle": true,
               "wrap": true
             }
           ],
-          "width": "stretch"
+          "width": "auto"
         }
       ]
     },
     {
       "type": "TextBlock",
-      "text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+      "text": "{FirstParagraph}",
       "wrap": true
     }
   ],
@@ -51,5 +51,5 @@
     }
   ],
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-  "version": "1.2"
+  "version": "1.0"
 }
