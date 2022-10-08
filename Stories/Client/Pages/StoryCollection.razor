@@ -22,12 +22,32 @@
                 <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
             <span>&nbsp;&nbsp;&nbsp;</span><em style="color:steelblue; display:inline-block; align-self:flex-end">Loading stories...</em>
-        </div>
+    </div>
 }
 else
 {
-        <AdaptiveCard Model="@pure" Schema="@schema"></AdaptiveCard>
-        <CardCollection Models="@stories.ToArray()" Schema="@schema" CardClass="col-4" ></CardCollection>
+    <div class="row">
+    @foreach (Stories.Shared.Models.Story s in stories)
+    {
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
+            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
+            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
+            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
+            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
+            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
+        </div>
+    }
+    </div>
+
+    <!--CardCollection Models="stories.ToArray()" Schema="schema" CardClass="col-4" ></!--CardCollection-->
 }
 
 @code {
@@ -35,7 +55,7 @@ else
     public string? Title { get; set; }        // todo: try using PageTitle
 
 
-    List<Story> stories = new();
+    List<Stories.Shared.Models.Story> stories = new();
     string schema = string.Empty;
     Stories.Shared.StoryPure pure = new ();
 
@@ -70,7 +90,7 @@ else
 
     private async Task LoadStories()
     {
-        stories = await http.GetFromJsonAsync<List<Story>>("api/Story") ?? new List<Story>();
+        stories = await http.GetFromJsonAsync<List<Stories.Shared.Models.Story>>("api/Story") ?? new List<Stories.Shared.Models.Story>();
     }
 
     // handling actions :  https://www.adaptivecardsblazor.com/cards/actions.html
