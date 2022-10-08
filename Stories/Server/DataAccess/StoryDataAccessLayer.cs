@@ -28,14 +28,14 @@ namespace Stories.Server.DataAccess
             fireStoreDb = FirestoreDb.Create(projectId);
         }
 
-        public async Task<List<Story>> GetAllStories()
+        public async Task<List<StoryModel>> GetAllStories()
         {
             try
             {
                 Query storiesQuery = fireStoreDb.Collection("stories");
                 QuerySnapshot storiesQuerySnapshot = await storiesQuery.GetSnapshotAsync();
                  
-                List<Story> stories = new List<Story>();
+                List<StoryModel> stories = new List<StoryModel>();
 
                 foreach (DocumentSnapshot storySnapshot in storiesQuerySnapshot.Documents)
                 {
@@ -43,7 +43,7 @@ namespace Stories.Server.DataAccess
                     {
                         Dictionary<string, object> storyDictionary = storySnapshot.ToDictionary();
                         string storyJson = JsonSerializer.Serialize(storyDictionary);
-                        Story? story = JsonSerializer.Deserialize<Story>(storyJson);
+                        StoryModel? story = JsonSerializer.Deserialize<StoryModel>(storyJson);
 
                         if (story is null) throw new NullReferenceException();
 
@@ -62,7 +62,7 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        public async void AddStory(Story story)
+        public async void AddStory(StoryModel story)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace Stories.Server.DataAccess
             }
         }*/
 
-        public async Task<Story> GetStoryData(string storyId)
+        public async Task<StoryModel> GetStoryData(string storyId)
         {
             try
             {
@@ -98,13 +98,13 @@ namespace Stories.Server.DataAccess
 
                 if (storySnapshot.Exists)
                 {
-                    Story story = storySnapshot.ConvertTo<Story>();
+                    StoryModel story = storySnapshot.ConvertTo<StoryModel>();
                     story.StoryId = storySnapshot.Id;
                     return story;
                 }
                 else
                 {
-                    return new Story();
+                    return new StoryModel();
                 }
             }
             catch

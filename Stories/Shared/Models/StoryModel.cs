@@ -10,7 +10,7 @@ using Google.Cloud.Firestore;
 namespace Stories.Shared.Models
 {
     [FirestoreData]
-    public class Story
+    public class StoryModel
     {
         public string StoryId { get; set; } = String.Empty;
         public DateTime DateCreated { get; set; } = new DateTime();
@@ -41,7 +41,7 @@ namespace Stories.Shared.Models
                 );
             }*/
 
-            typeof(Story)
+            typeof(StoryModel)
                 .GetProperties()
                 .ToList()
                 .ForEach(

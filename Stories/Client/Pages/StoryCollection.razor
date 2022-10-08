@@ -27,7 +27,7 @@
 else
 {
     <div class="row">
-    @foreach (Stories.Shared.Models.Story s in stories)
+    @foreach (Stories.Shared.Models.StoryModel s in stories)
     {
         <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
             <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
@@ -55,9 +55,8 @@ else
     public string? Title { get; set; }        // todo: try using PageTitle
 
 
-    List<Stories.Shared.Models.Story> stories = new();
+    List<StoryModel> stories = new();
     string schema = string.Empty;
-    Stories.Shared.StoryPure pure = new ();
 
 
     protected override async Task OnInitializedAsync()
@@ -90,7 +89,7 @@ else
 
     private async Task LoadStories()
     {
-        stories = await http.GetFromJsonAsync<List<Stories.Shared.Models.Story>>("api/Story") ?? new List<Stories.Shared.Models.Story>();
+        stories = await http.GetFromJsonAsync<List<StoryModel>>("api/Story") ?? new List<StoryModel>();
     }
 
     // handling actions :  https://www.adaptivecardsblazor.com/cards/actions.html

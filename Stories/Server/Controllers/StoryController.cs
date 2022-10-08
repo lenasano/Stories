@@ -13,19 +13,19 @@ namespace Stories.Server.Controllers
         StoryDataAccessLayer storyDataAccess = new ();
 
         [HttpGet]
-        public Task<List<Story>> Get()
+        public Task<List<StoryModel>> Get()
         {
             return storyDataAccess.GetAllStories();
         }
 
         [HttpGet("{storyId}")]
-        public Task<Story> Get(string storyId)
+        public Task<StoryModel> Get(string storyId)
         {
             return storyDataAccess.GetStoryData(storyId);
         }
 
         [HttpPost]
-        public void Post([FromBody] Story story)
+        public void Post([FromBody] StoryModel story)
         {
             storyDataAccess.AddStory(story);
         }
