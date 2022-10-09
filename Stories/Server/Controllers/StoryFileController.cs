@@ -20,15 +20,13 @@ using System.Text.RegularExpressions;
 
 [ApiController]
 [Route("[controller]")]
-public class SaveStoryController : ControllerBase
+public class StoryFileController : ControllerBase
 {
     private readonly IWebHostEnvironment env;
-    private readonly ILogger<SaveStoryController> logger;
+    private readonly ILogger<StoryFileController> logger;
 
-    private static string UPLOAD_FOLDERNAME = "unsafe_uploads";
-
-    public SaveStoryController(IWebHostEnvironment env,
-        ILogger<SaveStoryController> logger)
+    public StoryFileController(IWebHostEnvironment env,
+        ILogger<StoryFileController> logger)
     {
         this.env = env;
         this.logger = logger;
@@ -39,14 +37,7 @@ public class SaveStoryController : ControllerBase
     {
         try
         {
-            string filecontent;
-            using (System.IO.StreamReader reader = new System.IO.StreamReader(Request.Body, Encoding.UTF8))
-            {
-                filecontent = await reader.ReadToEndAsync();
-            }
-
-            await TextImageFileWriter.CreateImageFileFromText(filecontent, ImageFormat.Png);
-
+            await StoryFileWriter.CreateFilesFromText(Request.Body, Encoding.UTF8);
             return Ok(new object());
         }
         catch (Exception)

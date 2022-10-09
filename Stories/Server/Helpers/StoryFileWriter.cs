@@ -2,38 +2,50 @@
 using System.Drawing.Imaging;
 using System.Text;
 using System.Text.RegularExpressions;
+using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace Stories.Server.Helpers
 {
-    public static class TextImageFileWriter
+    public static class StoryFileWriter
     {
         private static string UPLOAD_FOLDERNAME = "unsafe_uploads";
 
         private const int IMAGE_WIDTH = 1000;
         private const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2200;
 
-        public static async Task CreateImageFileFromText(string filecontent, ImageFormat imageFileType)
+        public static async Task CreateFilesFromText(Stream text, Encoding encoding)
         {
+            string filecontent;
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(text, encoding))
+            {
+                filecontent = await reader.ReadToEndAsync();
+            }
+
             string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDERNAME);
             if (!Directory.Exists(uploadFolder))
                 Directory.CreateDirectory(uploadFolder);    // todo: make sure this dir has no execute permissions, and that files inherit this parent dir's permissions
 
             if (filecontent.Length > 0)
             {
-                string fullPath = Path.Combine(uploadFolder, Path.GetRandomFileName());
+                await SaveTextAsFile(filecontent, uploadFolder);
 
-                using (FileStream stream = new(fullPath, FileMode.Create))
-                {
-                    await stream.WriteAsync(Encoding.ASCII.GetBytes(filecontent));
-                }
+                SaveTextAsImage(filecontent, uploadFolder, ImageFormat.Png);
+            }
+        }
 
-                SaveTextAsImage(filecontent, imageFileType);
+        public static async Task SaveTextAsFile(string filecontent, string path)
+        {
+            string fullPath = Path.Combine(path, Path.GetRandomFileName());
+
+            using (FileStream stream = new(fullPath, FileMode.Create))
+            {
+                await stream.WriteAsync(Encoding.ASCII.GetBytes(filecontent));
             }
         }
 
         // TODO: consider converting this function to async
 
-        public static void SaveTextAsImage(string text, ImageFormat f)
+        public static void SaveTextAsImage(string text, string path, ImageFormat f)
         {
             text = PrepareStringForConversion(text);
 
@@ -73,7 +85,7 @@ namespace Stories.Server.Helpers
             g.Flush();
             string fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + ".png";
 
-            bitmap.Save(Path.Combine(Environment.CurrentDirectory, UPLOAD_FOLDERNAME, fileName), f);
+            bitmap.Save(Path.Combine(Environment.CurrentDirectory, path, fileName), f);
 
 
             //p.Dispose();
@@ -117,7 +129,7 @@ namespace Stories.Server.Helpers
         public static string WrapTextWithGraphics(in Graphics g, string original, in int width, in Font font, List<string>? wrappedLines = null, int start = 0)
         {
             if (wrappedLines is null) wrappedLines = new();                 // happens in the first iteration
-            if (original is null) original = string.Empty;              // this might happen in the first iteration, if a null string is passed in on the first call to this function
+            if (original is null) original = string.Empty;                  // this might happen in the first iteration, if a null string is passed in on the first call to this function
 
             //  _base case_:  empty string or reached the end
 
@@ -129,7 +141,7 @@ namespace Stories.Server.Helpers
             }
 
             // estimate the end position for the current line (for a size 20 font, divide by 7)
-            int end = start + (width / 7);                                  // overestinate the number of chars in the next line of text
+            int end = start + (width / 7);                                  // overestinate the number of chars in the next line of text ... todo: text with different font sizes
 
             end = end < original.Length ? end : original.Length - 1;        // in the last iteration, we need to adjust in case we are over the string length
 
@@ -142,7 +154,7 @@ namespace Stories.Server.Helpers
                 ;
                 g.MeasureString(original.Substring(start, end - start + 1), font).Width > width;
                 end = original.LastWordBoundaryBefore(end - 1, start)
-            ) ;
+            );
 
             wrappedLines.Add(original.Substring(start, end - start + 1));
 

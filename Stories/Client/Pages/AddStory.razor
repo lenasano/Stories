@@ -110,7 +110,9 @@
                 storytext.Substring(0, STORY_TEXT_MAX_CHARACTER_LENGTH),
                 Environment.NewLine,
                 Environment.NewLine,
-                $"... We're sorry, this story exceeded the maximum length for images ({STORY_TEXT_MAX_CHARACTER_LENGTH} characters). Please read the story ending online."
+                "... We're sorry, this story exceeded the maximum length" +
+                $"for images ({STORY_TEXT_MAX_CHARACTER_LENGTH} characters). " +
+                "Please read the story ending online."
             );
 
 
@@ -124,7 +126,7 @@
             )
         );
 
-        HttpResponseMessage result = await http.PostAsync("SaveStory", postRequestBody);
+        HttpResponseMessage result = await http.PostAsync("StoryFile", postRequestBody);
 
         if( result.IsSuccessStatusCode )
         {

@@ -10,7 +10,7 @@
 
 <h1>Hello Adaptive Cards for Blazor!</h1>
 
-Please login if you are John:
+<em>Please login if you are John:</em>
 
 <p></p>
 
@@ -44,7 +44,7 @@ Please login if you are John:
     {
         //SubmitHandler="this"
 
-        if( authentication.MockSignIn("john", "hi") )
+        if( authentication.MockSignIn("john@stories.com", "hi") )
             navigation.NavigateTo("/");
     }
 }
