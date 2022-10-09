@@ -5,7 +5,6 @@ using Stories.Server.DataAccess;
 
 namespace Stories.Server.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class StoryController : Controller

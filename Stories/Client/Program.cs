@@ -32,8 +32,8 @@ namespace Stories.Client
            
             builder.Services.AddBlazorAdaptiveCards();
 
-            builder.Services.AddScoped<FirestoreAuthenticationStateProvider>();
-            builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<FirestoreAuthenticationStateProvider>());
+            builder.Services.AddScoped<MockupAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<MockupAuthenticationStateProvider>());
             builder.Services.AddAuthorizationCore();
 
             //builder.Services.AddApiAuthorization();
