@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.ResponseCompression;
+﻿//using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.ResponseCompression;
+//using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+//using Stories.Client.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-//builder.Services.AddBlazorAdaptiveCards();
+
+/*
+builder.Services.AddApiAuthorization();
+builder.Services.AddApiAuthorization(options =>
+{
+    options.UserOptions.RoleClaim = "role";
+});*/
 
 var app = builder.Build();
 
@@ -28,6 +37,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();    // not sure if needed
 
 
 app.MapRazorPages();

@@ -1,0 +1,16 @@
+﻿@page "/LogoutRedirect"
+
+@using Stories.Client.Authentication
+
+@inject NavigationManager navigation
+@inject FirestoreAuthenticationStateProvider authentication
+
+<h3>You are now logged out.</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        authentication.FakedSignOut();
+        navigation.NavigateTo("/");
+    }
+}

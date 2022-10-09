@@ -9,6 +9,8 @@ using AdaptiveCards.Blazor.ActionHandlers;
 using AdaptiveCards.Blazor.Actions;
 using AdaptiveCards.Rendering.Html;
 using AdaptiveCards.Blazor.Templating;
+using Microsoft.AspNetCore.Components.Authorization;
+using Stories.Client.Authentication;
 
 namespace Stories.Client
 {
@@ -27,8 +29,14 @@ namespace Stories.Client
             builder.Services.AddSingleton<ISubmitActionHandler, DefaultSubmitActionHandler>();
             builder.Services.AddSingleton<BlazorAdaptiveCardsOptions>();
             */
-            
+           
             builder.Services.AddBlazorAdaptiveCards();
+
+            builder.Services.AddScoped<FirestoreAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<FirestoreAuthenticationStateProvider>());
+            builder.Services.AddAuthorizationCore();
+
+            //builder.Services.AddApiAuthorization();
 
             await builder.Build().RunAsync();
         }

@@ -75,19 +75,22 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        /*  modifying stories is not supported in our app
-        public async void UpdateEmployee(Story story)
+        public async void UpdateStoryPageView()
         {
             try
             {
+                /*
                 DocumentReference storyDocument = fireStoreDb.Collection("stories").Document(story.StoryId);
                 await storyDocument.SetAsync(story, SetOptions.Overwrite);
+                */
+
+                await Task.Delay(1);
             }
             catch
             {
                 throw;
             }
-        }*/
+        }
 
         public async Task<StoryModel> GetStoryData(string storyId)
         {

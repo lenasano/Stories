@@ -1,13 +1,16 @@
 ﻿@page "/Login"
+@attribute [AllowAnonymous]
 
-@using AdaptiveCards.Blazor.Actions 
+@using AdaptiveCards.Blazor.Actions
+@using Stories.Client.Authentication
 
 @inject HttpClient http
-<!-- created cards for stories using AdaptiveCardsBlazor NuGet package (MIT licensed), see also https://www.adaptivecardsblazor.com/gettingstarted.html -->
+@inject NavigationManager navigation
+@inject FirestoreAuthenticationStateProvider authentication
 
 <h1>Hello Adaptive Cards for Blazor!</h1>
 
-Here's a card for logging in, if you are John:
+Please login if you are John:
 
 <p></p>
 
@@ -20,6 +23,9 @@ Here's a card for logging in, if you are John:
         <AdaptiveCard Schema="@schema"  SubmitHandler="this"></AdaptiveCard>
     </div>
 </div>
+
+<p></p>
+<button class="btn btn-primary" @onclick="OnNormalLoginClicked">Login as normal user</button>
 
 
 @code {
@@ -34,8 +40,9 @@ Here's a card for logging in, if you are John:
         string s = response.StatusCode.ToString();
     }
 
-    public Task Submit(string LoginVal)// UserVal, string PassVal)
+    private void OnNormalLoginClicked()
     {
-        return Task.CompletedTask;      // seems weird - is this meant to be an async function?
+        authentication.FakedSignIn();
+        navigation.NavigateTo("/");
     }
 }
