@@ -20,12 +20,12 @@ Please login if you are John:
 
 <div class="row row d-flex justify-content-center">
     <div class="col-sm-9 col-md-8 col-lg-7 col-xl-6">
-        <AdaptiveCard Schema="@schema"  SubmitHandler="this"></AdaptiveCard>
+        <AdaptiveCard Schema="@schema" OnSubmitAction="OnLoginClicked"></AdaptiveCard>
     </div>
 </div>
 
 <p></p>
-<button class="btn btn-primary" @onclick="OnNormalLoginClicked">Login as normal user</button>
+<button class="btn btn-primary" @onclick="OnLoginClicked">Login as normal user</button>
 
 
 @code {
@@ -40,8 +40,10 @@ Please login if you are John:
         string s = response.StatusCode.ToString();
     }
 
-    private void OnNormalLoginClicked()
+    private void OnLoginClicked()
     {
+        //SubmitHandler="this"
+
         if( authentication.MockSignIn("john", "hi") )
             navigation.NavigateTo("/");
     }

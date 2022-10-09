@@ -124,7 +124,7 @@
             )
         );
 
-        HttpResponseMessage result = await http.PostAsync("SaveFile", postRequestBody);
+        HttpResponseMessage result = await http.PostAsync("SaveStory", postRequestBody);
 
         if( result.IsSuccessStatusCode )
         {

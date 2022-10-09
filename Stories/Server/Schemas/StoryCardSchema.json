@@ -42,7 +42,7 @@
     {
       "type": "Action.OpenUrl",
       "title": "View",
-      "url": "https://adaptivecards.io"
+      "url": "Story/{{StoryId}}"
     },
     {
       "type": "Action.OpenUrl",
