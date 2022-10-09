@@ -7,6 +7,7 @@
 @using System.Net.Http.Headers
 
 @using Stories.Shared
+@using Stories.Shared.Models
 
 @inject HttpClient http
 
@@ -21,17 +22,9 @@
             <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" />
         </svg>
 
-        <strong>Finished</strong>
-        <br />
-
         @statusMessage
 
     </div>
-}
-
-@if (imgUrl != string.Empty)
-{
-    <img src="@imgUrl">
 }
 
 <p />
@@ -39,26 +32,16 @@
 <EditForm Model="@story" OnSubmit="@AddStoryAsync">
 
     <InputText class="form-control" @bind-Value="story.Title" />
-    <InputTextArea class="form-control" @bind-Value="story.Text" rows="20" />
+    <InputTextArea class="form-control" @bind-Value="story.FullText" rows="20" maxlength="2000"/>
 
     <br />
-    <button class="btn btn-primary" type="submit">Add</button>
+    <button class="btn btn-primary" type="submit">Add Story</button>
 </EditForm>
 
 
 @code {
 
-    public class StoryModel
-    {
-        public string Title { get; set; } = string.Empty;
-        public string Text  { get; set; } = string.Empty;
-    }
-
-
     private StoryModel story = new();
-
-    const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2000;
-
 
     string imgUrl = string.Empty;
 
@@ -69,30 +52,12 @@
 
     private async Task AddStoryAsync()
     {
-        if (string.IsNullOrEmpty(story.Text)) return;
-
-
-        // todo: remove < > from string
-
-        HttpResponseMessage response =
-            await http.GetAsync(
-                "https://api.imgbun.com/png?key=f47fb593fd54e825bb029ad9e1d8deab&text=" + story.Text.Substring(0, Min(499, story.Text.Length))
-            );
-
-        if (response.IsSuccessStatusCode)
+        if (string.IsNullOrEmpty(story.FullText)) return;
         {
-            string r = await response.Content.ReadAsStringAsync();
-            imgUrl = JsonSerializer.Deserialize<Dictionary<string, string>>(r)?["direct_link"] ?? string.Empty;
-
             await PostStoryToServerAsync();
 
             story.Title = string.Empty;
-            story.Text  = string.Empty;
-        }
-        else
-        {
-            bootstrapAlertType = "alert-danger";
-            statusMessage = response.ReasonPhrase ?? string.Empty;
+            story.FullText  = string.Empty;
         }
     }
 
@@ -100,38 +65,20 @@
 
     private async Task PostStoryToServerAsync()
     {
+        story.Title    = story.Title   .Trim();
+        story.FullText = story.FullText.Trim();
 
-        string storytext  = story.Text.Trim();
-        string storytitle = story.Title.Trim();
-
-
-        if (storytext.Length > STORY_TEXT_MAX_CHARACTER_LENGTH)
-            storytext = string.Concat(
-                storytext.Substring(0, STORY_TEXT_MAX_CHARACTER_LENGTH),
-                Environment.NewLine,
-                Environment.NewLine,
-                "... We're sorry, this story exceeded the maximum length" +
-                $"for images ({STORY_TEXT_MAX_CHARACTER_LENGTH} characters). " +
-                "Please read the story ending online."
-            );
-
-
-        StringContent postRequestBody =
-        new (
-            string.Join(
-                Environment.NewLine,
-                storytitle,
-                imgUrl,
-                storytext
-            )
-        );
-
-        HttpResponseMessage result = await http.PostAsync("StoryFile", postRequestBody);
+        HttpResponseMessage result = await http.PostAsJsonAsync("StoryFile", story);
 
         if( result.IsSuccessStatusCode )
         {
             bootstrapAlertType = "alert-success";
-            statusMessage = imgUrl;
+            statusMessage = "Success! The story was added succesfully.";
+        }
+        else
+        {
+            bootstrapAlertType = "alert-danger";
+            statusMessage = "Oops, something went wrong.";
         }
     }
 }

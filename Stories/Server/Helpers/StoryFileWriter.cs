@@ -2,7 +2,6 @@
 using System.Drawing.Imaging;
 using System.Text;
 using System.Text.RegularExpressions;
-using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace Stories.Server.Helpers
 {
@@ -13,15 +12,17 @@ namespace Stories.Server.Helpers
         private const int IMAGE_WIDTH = 1000;
         private const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2200;
 
-        public static async Task CreateFilesFromText(Stream text, Encoding encoding)
+        public static async Task CreateFilesFromText(string filecontent)//, Encoding encoding)
         {
+            /*
             string filecontent;
             using (System.IO.StreamReader reader = new System.IO.StreamReader(text, encoding))
             {
                 filecontent = await reader.ReadToEndAsync();
             }
-
+            */
             string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDERNAME);
+
             if (!Directory.Exists(uploadFolder))
                 Directory.CreateDirectory(uploadFolder);    // todo: make sure this dir has no execute permissions, and that files inherit this parent dir's permissions
 
@@ -33,7 +34,7 @@ namespace Stories.Server.Helpers
             }
         }
 
-        public static async Task SaveTextAsFile(string filecontent, string path)
+        private static async Task SaveTextAsFile(string filecontent, string path)
         {
             string fullPath = Path.Combine(path, Path.GetRandomFileName());
 
@@ -43,9 +44,11 @@ namespace Stories.Server.Helpers
             }
         }
 
+        #region helper functions for creating an image file
+
         // TODO: consider converting this function to async
 
-        public static void SaveTextAsImage(string text, string path, ImageFormat f)
+        private static void SaveTextAsImage(string text, string path, ImageFormat f)
         {
             text = PrepareStringForConversion(text);
 
@@ -160,6 +163,8 @@ namespace Stories.Server.Helpers
 
             return WrapTextWithGraphics(g, original, width, font, wrappedLines, end + 1);
         }
+
+        #endregion helper functions for creating an image file
     }
 
     public static class StringExtensions

@@ -1,22 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Text;
+using System.Text.Json;
 
 using Stories.Shared;
+using Stories.Shared.Models;
 using Stories.Server.Helpers;
-
-using System.Text;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
-using System.Drawing.Drawing2D;
-
-using System.Linq;
-using System.Text.RegularExpressions;
 
 [ApiController]
 [Route("[controller]")]
@@ -33,11 +27,11 @@ public class StoryFileController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<IList<UploadedStory>>> SaveFileAsync()
+    public async Task<ActionResult> SaveFileAsync([FromBody] StoryModel story)
     {
         try
         {
-            await StoryFileWriter.CreateFilesFromText(Request.Body, Encoding.UTF8);
+            await StoryFileWriter.CreateFilesFromText(story.FullText);//, Encoding.UTF8);
             return Ok(new object());
         }
         catch (Exception)
