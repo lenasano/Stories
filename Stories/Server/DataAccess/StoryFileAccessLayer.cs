@@ -1,26 +1,24 @@
-﻿using System.Drawing;
+﻿using Microsoft.AspNetCore.Components.Web;
+using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
-namespace Stories.Server.Helpers
+namespace Stories.Server.DataAccess
 {
-    public static class StoryFileWriter
+    public static class StoryFileAccessLayer
     {
         private static string UPLOAD_FOLDERNAME = "unsafe_uploads";
 
         private const int IMAGE_WIDTH = 1000;
         private const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2200;
 
-        public static async Task CreateFilesFromText(string filename, string filecontent)//, Encoding encoding)
+        #region public functions called by controller
+
+        public static async Task CreateStoryFilesFromText(string filename, string filecontent)
         {
-            /*
-            string filecontent;
-            using (System.IO.StreamReader reader = new System.IO.StreamReader(text, encoding))
-            {
-                filecontent = await reader.ReadToEndAsync();
-            }
-            */
             string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDERNAME);
 
             if (!Directory.Exists(uploadFolder))
@@ -28,13 +26,36 @@ namespace Stories.Server.Helpers
 
             if (filecontent.Length > 0)
             {
-                await SaveTextAsFile(filename, filecontent, uploadFolder);
+                await SaveTextAsFile(filecontent, filename, uploadFolder);
 
-                SaveTextAsImage(filename, filecontent, uploadFolder, ImageFormat.Png);
+                SaveTextAsImage(filecontent, filename, uploadFolder, ImageFormat.Png);
             }
         }
 
-        private static async Task SaveTextAsFile(string filename, string filecontent, string path)
+        public static async Task<string> GetStoryTextFromFileAsync(string storyId)
+        {
+            try
+            {
+                string fullfilepath = GetStoryTextFilePath(storyId);
+
+                string filecontents;
+                using (StreamReader streamReader = new StreamReader(fullfilepath, Encoding.UTF8))
+                {
+                    filecontents = await streamReader.ReadToEndAsync();
+                }
+                return filecontents ?? string.Empty;
+            }
+            catch (Exception)
+            {
+                throw new Exception();  // erase the stack trace in production mode, for security purposes
+            }
+        }
+
+        #endregion public functions called by controller
+
+        #region helper functions for working with text files
+
+        private static async Task SaveTextAsFile(string filecontent, string filename, string path)
         {
             string fullPath = Path.Combine(path, $"{filename}.txt");
 
@@ -44,11 +65,25 @@ namespace Stories.Server.Helpers
             }
         }
 
+        private static string GetStoryTextFilePath(string storyId)
+        {
+            string uploadFolder      = Path.Combine( Directory.GetCurrentDirectory(), UPLOAD_FOLDERNAME );
+            string storyTextFilePath = Path.Combine( uploadFolder                   , $"{storyId}.txt"  );
+
+            if (!Directory.Exists(uploadFolder)     ) throw new DirectoryNotFoundException();    // throw the errors for debugging session
+            if (!File     .Exists(storyTextFilePath)) throw new FileNotFoundException();         // troubleshooting (debugger will break here)
+
+            return storyTextFilePath;
+        }
+
+
+        #endregion helper functions for working with text files
+
         #region helper functions for creating an image file
 
         // TODO: consider converting this function to async
 
-        private static void SaveTextAsImage(string filename, string text, string path, ImageFormat f)
+        private static void SaveTextAsImage(string text, string filename, string path, ImageFormat f)
         {
             text = PrepareStringForConversion(text);
 

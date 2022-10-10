@@ -32,18 +32,6 @@ else
         <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
             <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
-            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
-        </div>
-        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
-            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
-        </div>
-        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
-            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
-        </div>
-        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4" style="padding:1em">
-            <AdaptiveCard Schema="@(s.PopulateSchema(schema))" />
-        </div>
     }
     </div>
 }
@@ -76,8 +64,8 @@ else
     {
         HttpResponseMessage schemaResult = await http.GetAsync("api/AdaptiveCard?cardtype=story");
 
-        schema = await schemaResult.Content.ReadAsStringAsync();    // todo: change {{ ... }} to ${ }
-    }                                                               // https://learn.microsoft.com/en-us/adaptive-cards/templating/language
+        schema = await schemaResult.Content.ReadAsStringAsync();
+    }
 
     private async Task LoadStories()
     {

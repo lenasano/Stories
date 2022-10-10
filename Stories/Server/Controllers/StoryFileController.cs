@@ -8,9 +8,8 @@ using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.Json;
 
-using Stories.Shared;
 using Stories.Shared.Models;
-using Stories.Server.Helpers;
+using Stories.Server.DataAccess;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -25,12 +24,30 @@ public class StoryFileController : ControllerBase
         this.logger = logger;
     }
 
+
+    [HttpGet("{storyId}")]
+    public async Task<IActionResult> GetStoryTextAsync(string storyId)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(storyId)) throw new InvalidOperationException();
+
+            string text = await StoryFileAccessLayer.GetStoryTextFromFileAsync(storyId);
+
+            return Ok(text);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
+    }
+
     [HttpPost]
     public async Task<ActionResult> SaveFileAsync([FromBody] StoryModel story)
     {
         try
         {
-            await StoryFileWriter.CreateFilesFromText(story.StoryId, story.FullText);
+            await StoryFileAccessLayer.CreateStoryFilesFromText(story.StoryId, story.FullText);
 
             return Ok(new object());
         }

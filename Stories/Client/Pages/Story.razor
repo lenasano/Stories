@@ -4,10 +4,12 @@
 @using System.Text.Json
 @using System.Net.Http.Headers
 
-@using Stories.Shared
+@using Stories.Shared.Models
+
+@inject HttpClient http
 
 
-@if ( string.IsNullOrEmpty(Text) )
+@if ( story is null )
 {
     <div style="display:flex;">
 
@@ -25,8 +27,8 @@
 }
 else
 {
-    <h1>@Title</h1>
-    <span>@Text</span>
+    <h1>@story.Title</h1>
+    <span>@story.FullText</span>
 
     <p>
         <em style="color:steelblue;">Click <NavLink class="nav-link" href="Login">here</NavLink> to download this story as a PNG graphic.</em>
@@ -39,9 +41,52 @@ else
     [Parameter]
     public string? StoryId { get; set; }
 
-    private string? Title;
-    private string? Text;
+    StoryModel? story;
 
-    // get the story text from the server
+
+    protected override async Task OnInitializedAsync()
+    {
+        // load the stories and schema on different threads
+        // this allows the two tasks to run in parallel, improving page loading speed
+        
+        Task<StoryModel?> storyInfoTask = Task.Run(async () => { return await LoadStoryData();    });
+        Task<string>      storyTextTask = Task.Run(async () => { return await LoadStoryText();    });
+        Task              incrementTask = Task.Run(async () => { await IncrementStoryPageViews(); });
+
+        // now make sure both Tasks are complete before exiting the function
+
+        story = await storyInfoTask;
+
+        if (story is not null) story.FullText = await storyTextTask;
+
+        await incrementTask;
+
+        /* this is the simpler but maybe slower way:
+         
+        story = await LoadStoryData();
+        if (story is not null) story.FullText = await LoadStoryText();
+
+        await IncrementStoryPageViews();
+
+        */
+
+    }
+
+    private async Task<StoryModel?> LoadStoryData()
+    {
+        return await http.GetFromJsonAsync<StoryModel>($"api/StoryData/{StoryId}");
+    }
+
+    private async Task<string> LoadStoryText()
+    {
+        HttpResponseMessage result = await http.GetAsync($"api/StoryFile/{StoryId}");
+
+        return await result.Content.ReadAsStringAsync();
+    }
+
     // update page views in firestore
+    private async Task IncrementStoryPageViews()
+    {
+        await Task.Yield(); //story = await http.GetFromJsonAsync<List<StoryModel>>("api/StoryData") ?? new List<StoryModel>();
+    }
 }

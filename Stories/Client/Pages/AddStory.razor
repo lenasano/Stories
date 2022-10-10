@@ -6,7 +6,6 @@
 @using System.Text.Json
 @using System.Net.Http.Headers
 
-@using Stories.Shared
 @using Stories.Shared.Models
 
 @inject HttpClient http
@@ -57,11 +56,10 @@
 
         try
         {
-
             HttpResponseMessage firebaseResult = await http.PostAsJsonAsync("api/StoryData", story);
 
-            string? storyid = await firebaseResult.Content.ReadAsStringAsync();
-            if (storyid is null) throw new NullReferenceException();
+            story.StoryId = await firebaseResult.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(story.StoryId)) throw new NullReferenceException();
 
             HttpResponseMessage serverResult = await http.PostAsJsonAsync("api/StoryFile", story);
 
@@ -77,9 +75,7 @@
             statusTitle = "Success! ";
             statusMessage = $"The story \"{story.Title}\" was added successfully.";
 
-            story.Title = string.Empty;
-            story.FullText = string.Empty;
-            
+            story = new StoryModel();
         }
         catch (Exception)
         {

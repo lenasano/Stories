@@ -42,7 +42,7 @@ namespace Stories.Server.DataAccess
                     if (storySnapshot.Exists)
                     {
                         Dictionary<string, object> storyDictionary = storySnapshot.ToDictionary();
-                        string storyJson = JsonSerializer.Serialize(storyDictionary);
+                        string storyJson  = JsonSerializer.Serialize(storyDictionary);
                         StoryModel? story = JsonSerializer.Deserialize<StoryModel>(storyJson);
 
                         if (story is null) throw new NullReferenceException();
@@ -56,9 +56,9 @@ namespace Stories.Server.DataAccess
 
                 return stories.OrderBy(x => x.DateCreated).ToList();
             }
-            catch
+            catch (Exception)
             {
-                throw;      // todo: fix
+                throw new Exception();      // reset stack trace for security purposes
             }
         }
 
@@ -70,9 +70,9 @@ namespace Stories.Server.DataAccess
                 DocumentReference storyRef = await stories.AddAsync(story);
                 return storyRef.Id;
             }
-            catch
+            catch (Exception)
             {
-                throw;      // todo: fix
+                throw new Exception();
             }
         }
 
@@ -87,9 +87,9 @@ namespace Stories.Server.DataAccess
 
                 await Task.Delay(1);
             }
-            catch
+            catch (Exception)
             {
-                throw;
+                throw new Exception();
             }
         }
 
@@ -112,9 +112,9 @@ namespace Stories.Server.DataAccess
                     return new StoryModel();
                 }
             }
-            catch
+            catch (Exception)
             {
-                throw;      // todo
+                throw new Exception();
             }
         }
 
