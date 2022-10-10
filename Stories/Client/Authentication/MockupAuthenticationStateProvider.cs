@@ -32,7 +32,7 @@ namespace Stories.Client.Authentication
             }
         }
 
-        public bool MockSignIn(string username, string password)
+        public bool MockSignIn(string? username, string? password)
         {
             /// Here is where we would send an API request to a Controller on the Server (within the
             /// Stories.Server project). The controller would forward the request to authenticate

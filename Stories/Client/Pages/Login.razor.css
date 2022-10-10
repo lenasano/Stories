@@ -1,0 +1,14 @@
+﻿body {
+}
+
+.form-group {
+    padding: 1em;
+}
+
+.btn-primary {
+    padding-left: 1em;
+}
+
+.validation-message {
+    font-size: smaller;
+}

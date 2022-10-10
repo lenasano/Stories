@@ -1,6 +1,7 @@
 ﻿@page "/Login"
 @attribute [AllowAnonymous]
 
+@using System.ComponentModel.DataAnnotations
 @using AdaptiveCards.Blazor.Actions
 @using Stories.Client.Authentication
 
@@ -9,38 +10,54 @@
 @inject MockupAuthenticationStateProvider authentication
 
 
-<h3>Please log in if you are John</h3>
+<!-- login component taken from https://github.com/cornflourblue/blazor-webassembly-registration-login-example -->
 
-<p />
-<p />
 
-<div class="row row d-flex justify-content-center">
-    <div class="col-sm-9 col-md-8 col-lg-7 col-xl-6">
-        <AdaptiveCard Schema="@schema" OnSubmitAction="OnLoginClicked"></AdaptiveCard>
+<div class="col-md-6 offset-md-3 mt-5">
+
+    <div class="card">
+        <h4 class="card-header">Login</h4>
+        <div class="card-body">
+            <EditForm Model="@loginInfo" OnValidSubmit="OnValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Username</label>
+                    <InputText @bind-Value="loginInfo.Username" class="form-control" />
+                    <ValidationMessage For="@(() => loginInfo.Username)" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <InputText @bind-Value="loginInfo.Password" type="password" class="form-control" />
+                    <ValidationMessage For="@(() => loginInfo.Password)" />
+                </div>
+                <br />
+                <button disabled="@loading" class="btn btn-primary">
+                    @if (loading)
+                    {
+                           <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                Login
+                </button>
+            </EditForm>
+        </div>
     </div>
-</div>
 
-<p></p>
-<button class="btn btn-primary" @onclick="OnLoginClicked">Quick login</button>
+</div>
 
 
 @code {
-    string schema = string.Empty;
-
-    protected override async Task OnInitializedAsync()
+    private class LoginInfo
     {
-        HttpResponseMessage response = await http.GetAsync("api/AdaptiveCard?cardtype=login");
-
-        schema = await response.Content.ReadAsStringAsync();
-
-        string s = response.StatusCode.ToString();
+        [Required] public string? Username { get; set; }
+        [Required] public string? Password { get; set; }
     }
 
-    private void OnLoginClicked()
-    {
-        //SubmitHandler="this"
+    private LoginInfo loginInfo = new ();
+    private bool loading;
 
-        if( authentication.MockSignIn("john@stories.com", "hi") )
+    private void OnValidSubmit()
+    {
+        if (authentication.MockSignIn(loginInfo.Username, loginInfo.Password))
             navigation.NavigateTo("/");
     }
 }

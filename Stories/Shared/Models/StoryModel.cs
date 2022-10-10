@@ -29,6 +29,7 @@ namespace Stories.Shared.Models
 
         [FirestoreProperty] public int     NumberOfDownloads  { get; set; } = 0;
 
+
         #endregion public properties
 
         public void SetFirstParagraph()
