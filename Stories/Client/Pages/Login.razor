@@ -32,13 +32,15 @@
                     <ValidationMessage For="@(() => loginInfo.Password)" />
                 </div>
                 <br />
-                <button disabled="@loading" class="btn btn-primary">
-                    @if (loading)
-                    {
-                           <span class="spinner-border spinner-border-sm mr-1"></span>
-                    }
-                    Login
-                </button>
+                <div style="padding-left: 1em">
+                    <button disabled="@loading" class="btn btn-primary">
+                        @if (loading)
+                        {
+                               <span class="spinner-border spinner-border-sm mr-1"></span>
+                        }
+                        Login
+                    </button>
+                </div>
             </EditForm>
         </div>
     </div>

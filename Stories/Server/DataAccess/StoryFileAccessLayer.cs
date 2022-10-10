@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
+using Microsoft.VisualBasic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -36,7 +37,7 @@ namespace Stories.Server.DataAccess
         {
             try
             {
-                string fullfilepath = GetStoryTextFilePath(storyId);
+                string fullfilepath = GetStoryFilePath(storyId, "txt");
 
                 string filecontents;
                 using (StreamReader streamReader = new StreamReader(fullfilepath, Encoding.UTF8))
@@ -44,6 +45,22 @@ namespace Stories.Server.DataAccess
                     filecontents = await streamReader.ReadToEndAsync();
                 }
                 return filecontents ?? string.Empty;
+            }
+            catch (Exception)
+            {
+                throw new Exception();  // erase the stack trace in production mode, for security purposes
+            }
+        }
+
+        public static Stream GetStoryImageFile(string storyId)
+        {
+            try
+            {
+                string storyImageFilePath = GetStoryFilePath(storyId, "png");
+
+                FileStream stream = new FileStream(storyImageFilePath, FileMode.Open, FileAccess.Read);
+
+                return stream;
             }
             catch (Exception)
             {
@@ -65,10 +82,10 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        private static string GetStoryTextFilePath(string storyId)
+        private static string GetStoryFilePath(string storyId, string extension)
         {
             string uploadFolder      = Path.Combine( Directory.GetCurrentDirectory(), UPLOAD_FOLDERNAME );
-            string storyTextFilePath = Path.Combine( uploadFolder                   , $"{storyId}.txt"  );
+            string storyTextFilePath = Path.Combine( uploadFolder                   , $"{storyId}.{extension}"  );
 
             if (!Directory.Exists(uploadFolder)     ) throw new DirectoryNotFoundException();    // throw the errors for debugging session
             if (!File     .Exists(storyTextFilePath)) throw new FileNotFoundException();         // troubleshooting (debugger will break here)
