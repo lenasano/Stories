@@ -12,22 +12,33 @@ namespace Stories.Shared.Models
     [FirestoreData]
     public class StoryModel
     {
+        const int FIRST_PARAGRAPH_MAX_LENGTH = 300;
+
         #region public properties
 
-        public string StoryId        { get; set; } = string.Empty;
-                            public DateTime DateCreated  { get; set; } = new DateTime();
+                            public string   StoryId           { get; set; } = string.Empty;
+                            public DateTime DateCreated       { get; set; } = new DateTime();
 
-        [FirestoreProperty] public string Title          { get; set; } = string.Empty;
+        [FirestoreProperty] public string   Title             { get; set; } = string.Empty;
 
-        [FirestoreProperty] public string FirstParagraph { get; set; } = string.Empty;
+        [FirestoreProperty] public string   FirstParagraph    { get; set; } = string.Empty;
 
-                            public string FullText       { get; set; } = string.Empty;
+                            public string   FullText          { get; set; } = string.Empty;
 
-        [FirestoreProperty] public int NumberOfPageViews { get; set; } = 0;
+        [FirestoreProperty] public int      NumberOfPageViews { get; set; } = 0;
 
-        [FirestoreProperty] public int NumberOfDownloads { get; set; } = 0;
+        [FirestoreProperty] public int     NumberOfDownloads  { get; set; } = 0;
 
         #endregion public properties
+
+        public void SetFirstParagraph()
+        {
+            if (!string.IsNullOrWhiteSpace(FirstParagraph)) return;
+
+            FirstParagraph = FullText.Length < FIRST_PARAGRAPH_MAX_LENGTH  ? FullText       : FullText.Substring(0, FIRST_PARAGRAPH_MAX_LENGTH);
+            FirstParagraph = !FirstParagraph.Contains(Environment.NewLine) ? FirstParagraph : FirstParagraph.Substring(0, FirstParagraph.IndexOf(Environment.NewLine));
+            FirstParagraph = FirstParagraph.Trim();
+        }
 
         /// <summary>
         /// Replaces the schema placeholders with this instance's property values.

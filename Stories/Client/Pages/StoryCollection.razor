@@ -6,7 +6,7 @@
 
 <h2>@Title</h2>
 
-<p></p>
+<p />
 
 @if (stories.Count == 0 || string.IsNullOrEmpty(schema))
 {
@@ -48,6 +48,7 @@ else
     </div>
 }
 
+
 @code {
     [Parameter]
     public string? Title { get; set; }        // todo: try using PageTitle
@@ -62,15 +63,8 @@ else
         // load the stories and schema on different threads
         // this allows the two tasks to run in parallel, improving page loading speed
 
-        Task schemaTask = Task.Run(async () =>
-        {
-            await LoadStorySchema();
-        });
-
-        Task storiesTask = Task.Run(async () =>
-        {
-            await LoadStories();
-        });
+        Task schemaTask  = Task.Run( async () => { await LoadStorySchema(); });
+        Task storiesTask = Task.Run( async () => { await LoadStories();     });
 
         // now make sure both Tasks are complete before exiting the function
 
@@ -80,14 +74,14 @@ else
 
     private async Task LoadStorySchema()
     {
-        HttpResponseMessage schemaResult = await http.GetAsync("AdaptiveCard?cardtype=story");
+        HttpResponseMessage schemaResult = await http.GetAsync("api/AdaptiveCard?cardtype=story");
 
         schema = await schemaResult.Content.ReadAsStringAsync();    // todo: change {{ ... }} to ${ }
     }                                                               // https://learn.microsoft.com/en-us/adaptive-cards/templating/language
 
     private async Task LoadStories()
     {
-        stories = await http.GetFromJsonAsync<List<StoryModel>>("api/Story") ?? new List<StoryModel>();
+        stories = await http.GetFromJsonAsync<List<StoryModel>>("api/StoryData") ?? new List<StoryModel>();
     }
 
     // handling actions :  https://www.adaptivecardsblazor.com/cards/actions.html

@@ -13,16 +13,15 @@ using Stories.Shared.Models;
 using Stories.Server.Helpers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class StoryFileController : ControllerBase
 {
     private readonly IWebHostEnvironment env;
     private readonly ILogger<StoryFileController> logger;
 
-    public StoryFileController(IWebHostEnvironment env,
-        ILogger<StoryFileController> logger)
+    public StoryFileController(IWebHostEnvironment env, ILogger<StoryFileController> logger)
     {
-        this.env = env;
+        this.env    = env;
         this.logger = logger;
     }
 
@@ -31,7 +30,8 @@ public class StoryFileController : ControllerBase
     {
         try
         {
-            await StoryFileWriter.CreateFilesFromText(story.FullText);//, Encoding.UTF8);
+            await StoryFileWriter.CreateFilesFromText(story.StoryId, story.FullText);
+
             return Ok(new object());
         }
         catch (Exception)

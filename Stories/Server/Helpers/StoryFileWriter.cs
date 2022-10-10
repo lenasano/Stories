@@ -12,7 +12,7 @@ namespace Stories.Server.Helpers
         private const int IMAGE_WIDTH = 1000;
         private const int STORY_TEXT_MAX_CHARACTER_LENGTH = 2200;
 
-        public static async Task CreateFilesFromText(string filecontent)//, Encoding encoding)
+        public static async Task CreateFilesFromText(string filename, string filecontent)//, Encoding encoding)
         {
             /*
             string filecontent;
@@ -28,15 +28,15 @@ namespace Stories.Server.Helpers
 
             if (filecontent.Length > 0)
             {
-                await SaveTextAsFile(filecontent, uploadFolder);
+                await SaveTextAsFile(filename, filecontent, uploadFolder);
 
-                SaveTextAsImage(filecontent, uploadFolder, ImageFormat.Png);
+                SaveTextAsImage(filename, filecontent, uploadFolder, ImageFormat.Png);
             }
         }
 
-        private static async Task SaveTextAsFile(string filecontent, string path)
+        private static async Task SaveTextAsFile(string filename, string filecontent, string path)
         {
-            string fullPath = Path.Combine(path, Path.GetRandomFileName());
+            string fullPath = Path.Combine(path, $"{filename}.txt");
 
             using (FileStream stream = new(fullPath, FileMode.Create))
             {
@@ -48,7 +48,7 @@ namespace Stories.Server.Helpers
 
         // TODO: consider converting this function to async
 
-        private static void SaveTextAsImage(string text, string path, ImageFormat f)
+        private static void SaveTextAsImage(string filename, string text, string path, ImageFormat f)
         {
             text = PrepareStringForConversion(text);
 
@@ -86,9 +86,8 @@ namespace Stories.Server.Helpers
             g.DrawString(wrappedString, font, Brushes.Black, new PointF(10, 10));
 
             g.Flush();
-            string fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + ".png";
 
-            bitmap.Save(Path.Combine(Environment.CurrentDirectory, path, fileName), f);
+            bitmap.Save(Path.Combine(Environment.CurrentDirectory, path, $"{filename}.png"), f);
 
 
             //p.Dispose();

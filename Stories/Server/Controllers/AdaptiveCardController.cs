@@ -3,7 +3,7 @@ using System.IO;
 
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class AdaptiveCardController : ControllerBase
 {
     [HttpGet]

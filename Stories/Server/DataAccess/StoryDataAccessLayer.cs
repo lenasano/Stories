@@ -28,7 +28,7 @@ namespace Stories.Server.DataAccess
             fireStoreDb = FirestoreDb.Create(projectId);
         }
 
-        public async Task<List<StoryModel>> GetAllStories()
+        public async Task<List<StoryModel>> GetAllStoriesAsync()
         {
             try
             {
@@ -62,12 +62,13 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        public async void AddStory(StoryModel story)
+        public async Task<string> AddStoryAsync(StoryModel story)
         {
             try
             {
                 CollectionReference stories = fireStoreDb.Collection("stories");
-                await stories.AddAsync(story);
+                DocumentReference storyRef = await stories.AddAsync(story);
+                return storyRef.Id;
             }
             catch
             {
@@ -75,7 +76,7 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        public async void UpdateStoryPageView()
+        public async Task UpdateStoryPageViewAsync()
         {
             try
             {
@@ -92,7 +93,7 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        public async Task<StoryModel> GetStoryData(string storyId)
+        public async Task<StoryModel> GetStoryAsync(string storyId)
         {
             try
             {
@@ -103,6 +104,7 @@ namespace Stories.Server.DataAccess
                 {
                     StoryModel story = storySnapshot.ConvertTo<StoryModel>();
                     story.StoryId = storySnapshot.Id;
+
                     return story;
                 }
                 else

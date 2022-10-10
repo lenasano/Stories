@@ -18,11 +18,7 @@
 {
     <div class="alert @bootstrapAlertType mt-4" role="alert">
 
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" />
-        </svg>
-
-        @statusMessage
+        <b>@statusTitle</b> @statusMessage
 
     </div>
 }
@@ -46,38 +42,49 @@
     string imgUrl = string.Empty;
 
     string bootstrapAlertType = "alert-success";
+    string statusTitle   = string.Empty;
     string statusMessage = string.Empty;
-
 
 
     private async Task AddStoryAsync()
     {
         if (string.IsNullOrEmpty(story.FullText)) return;
-        {
-            await PostStoryToServerAsync();
 
-            story.Title = string.Empty;
-            story.FullText  = string.Empty;
-        }
-    }
-
-    private int Min(int first, int second) => first < second ? first : second;
-
-    private async Task PostStoryToServerAsync()
-    {
         story.Title    = story.Title   .Trim();
         story.FullText = story.FullText.Trim();
 
-        HttpResponseMessage result = await http.PostAsJsonAsync("StoryFile", story);
+        story.SetFirstParagraph();
 
-        if( result.IsSuccessStatusCode )
+        try
         {
+
+            HttpResponseMessage firebaseResult = await http.PostAsJsonAsync("api/StoryData", story);
+
+            string? storyid = await firebaseResult.Content.ReadAsStringAsync();
+            if (storyid is null) throw new NullReferenceException();
+
+            HttpResponseMessage serverResult = await http.PostAsJsonAsync("api/StoryFile", story);
+
+            if (
+                   !firebaseResult.IsSuccessStatusCode
+                || !serverResult.IsSuccessStatusCode
+            )
+            {
+                throw new Exception();
+            }
+
             bootstrapAlertType = "alert-success";
-            statusMessage = "Success! The story was added succesfully.";
+            statusTitle = "Success! ";
+            statusMessage = $"The story \"{story.Title}\" was added successfully.";
+
+            story.Title = string.Empty;
+            story.FullText = string.Empty;
+            
         }
-        else
+        catch (Exception)
         {
             bootstrapAlertType = "alert-danger";
+            statusTitle = "Error: ";
             statusMessage = "Oops, something went wrong.";
         }
     }

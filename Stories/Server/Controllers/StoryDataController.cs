@@ -2,32 +2,68 @@
 using Microsoft.AspNetCore.Mvc;
 using Stories.Shared.Models;
 using Stories.Server.DataAccess;
+using Stories.Server.Helpers;
+using System.Text;
+using System.Net;
 
 namespace Stories.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StoryController : Controller
+    public class StoryDataController : Controller
     {
         StoryDataAccessLayer storyDataAccess = new ();
 
         [HttpGet]
-        public Task<List<StoryModel>> Get()
+        public async Task<List<StoryModel>> GetAllStoriesAsync()
         {
-            return storyDataAccess.GetAllStories();
+            return await storyDataAccess.GetAllStoriesAsync();
         }
 
         [HttpGet("{storyId}")]
-        public Task<StoryModel> Get(string storyId)
+        public async Task<StoryModel> GetStoryAsync(string storyId)
         {
-            return storyDataAccess.GetStoryData(storyId);
+            return await storyDataAccess.GetStoryAsync(storyId);
         }
 
         [HttpPost]
-        public void Post([FromBody] StoryModel story)
+        public async Task<ActionResult> PostStoryAsync([FromBody] StoryModel story)
         {
-            storyDataAccess.AddStory(story);
+            try
+            {
+                string storyid = await storyDataAccess.AddStoryAsync(story) ?? string.Empty;
+
+                return Ok(storyid);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
+        
+
+        /*
+        [HttpPost]
+        public async Task<HttpResponseMessage> PostStoryAsync([FromBody] StoryModel story)
+        {
+            try
+            {
+                string storyid = await storyDataAccess.AddStoryAsync(story) ?? string.Empty;
+
+                return new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(
+                        storyid,
+                        Encoding.UTF8,
+                        "text/plain"
+                    )
+                };
+            }
+            catch (Exception)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }*/
 
         /*  not supported
         [HttpPut]
