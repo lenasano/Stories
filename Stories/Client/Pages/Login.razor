@@ -3,7 +3,7 @@
 
 @using System.ComponentModel.DataAnnotations
 @using AdaptiveCards.Blazor.Actions
-@using Stories.Client.Authentication
+@using Stories.Client.Services
 
 @inject HttpClient http
 @inject NavigationManager navigation
@@ -12,6 +12,7 @@
 
 <!-- login component taken from https://github.com/cornflourblue/blazor-webassembly-registration-login-example -->
 
+<div class="alert @StatusClass">@StatusMessage</div>
 
 <div class="col-md-6 offset-md-3 mt-5">
 
@@ -36,7 +37,7 @@
                     {
                            <span class="spinner-border spinner-border-sm mr-1"></span>
                     }
-                Login
+                    Login
                 </button>
             </EditForm>
         </div>
@@ -55,9 +56,25 @@
     private LoginInfo loginInfo = new ();
     private bool loading;
 
+    private string StatusClass = string.Empty;
+    private string StatusMessage = string.Empty;
+
     private void OnValidSubmit()
     {
+        // reset alerts on submit
+        StatusClass = string.Empty;
+        StatusMessage = string.Empty;
+
+
+        loading = true;
+
         if (authentication.MockSignIn(loginInfo.Username, loginInfo.Password))
             navigation.NavigateTo("/");
+        else
+        {
+            StatusClass = "alert-danger";
+            StatusMessage = "Oops! Could not authenticate login name and password.";
+            loading = false;
+        }
     }
 }

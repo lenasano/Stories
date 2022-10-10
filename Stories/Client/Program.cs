@@ -10,7 +10,7 @@ using AdaptiveCards.Blazor.Actions;
 using AdaptiveCards.Rendering.Html;
 using AdaptiveCards.Blazor.Templating;
 using Microsoft.AspNetCore.Components.Authorization;
-using Stories.Client.Authentication;
+using Stories.Client.Services;
 
 namespace Stories.Client
 {
@@ -29,7 +29,7 @@ namespace Stories.Client
             builder.Services.AddSingleton<ISubmitActionHandler, DefaultSubmitActionHandler>();
             builder.Services.AddSingleton<BlazorAdaptiveCardsOptions>();
             */
-           
+
             builder.Services.AddBlazorAdaptiveCards();
 
             builder.Services.AddScoped<MockupAuthenticationStateProvider>();

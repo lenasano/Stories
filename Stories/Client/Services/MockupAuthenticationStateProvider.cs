@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Stories.Client.Authentication
+namespace Stories.Client.Services
 {
     /// <summary>
     /// A mock up for authenticating users and propagating user claims such as would be returned from an
