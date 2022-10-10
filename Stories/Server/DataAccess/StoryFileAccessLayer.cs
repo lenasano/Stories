@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-using Microsoft.VisualBasic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
+
+using Stories.Shared.Models;
 
 namespace Stories.Server.DataAccess
 {
@@ -18,18 +16,19 @@ namespace Stories.Server.DataAccess
 
         #region public functions called by controller
 
-        public static async Task CreateStoryFilesFromText(string filename, string filecontent)
+        public static async Task CreateStoryFilesFromText(string filename, StoryModel story)
         {
             string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDERNAME);
 
             if (!Directory.Exists(uploadFolder))
                 Directory.CreateDirectory(uploadFolder);    // todo: make sure this dir has no execute permissions, and that files inherit this parent dir's permissions
 
-            if (filecontent.Length > 0)
+            if (story.FullText.Length > 0)
             {
-                await SaveTextAsFile(filecontent, filename, uploadFolder);
+                await SaveTextAsFile(story.FullText, filename, uploadFolder);
 
-                SaveTextAsImage(filecontent, filename, uploadFolder, ImageFormat.Png);
+                string imageText = CreateImageText(story);
+                SaveTextAsImage(imageText, filename, uploadFolder, ImageFormat.Png);
             }
         }
 
@@ -97,6 +96,17 @@ namespace Stories.Server.DataAccess
         #endregion helper functions for working with text files
 
         #region helper functions for creating an image file
+
+        public static string CreateImageText(StoryModel story)
+        {
+            return String.Join(
+                Environment.NewLine,
+                story.Title,
+                "by John",
+                story.DateCreated + Environment.NewLine,
+                story.FullText
+            );
+        }
 
         // TODO: consider converting this function to async
 

@@ -1,5 +1,7 @@
 ﻿@page "/Story/{StoryId}"
 
+@attribute [AllowAnonymous]
+
 @using System.IO
 @using System.Text.Json
 @using System.Net.Http.Headers
@@ -28,11 +30,18 @@
 else
 {
     <h1>@story.Title</h1>
-    <span>@story.FullText</span>
+
+    <p class="text-muted">by John</p>
+    <p class="text-muted">@story.DateCreated</p>
+
+    <p>@story.FullText</p>
 
     <p />
+    <p>
+        <em style="color:steelblue; display:inline-block; align-self:flex-end">Click <a href="api/StoryFile/Image/@(StoryId)">here</a> to download this story as a PNG graphic.</em>
+    </p>
     <p class="text-muted">
-        <em>Click <a href="api/StoryFile/Image/@(StoryId)">here</a> to download this story as a PNG graphic.</em>
+        Hint: Right-click on the image to download it.
     </p>
 }
 

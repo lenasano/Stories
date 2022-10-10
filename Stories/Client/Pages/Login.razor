@@ -4,6 +4,7 @@
 @using System.ComponentModel.DataAnnotations
 @using AdaptiveCards.Blazor.Actions
 @using Stories.Client.Services
+@using Stories.Shared.Models
 
 @inject HttpClient http
 @inject NavigationManager navigation
@@ -12,7 +13,10 @@
 
 <!-- login component taken from https://github.com/cornflourblue/blazor-webassembly-registration-login-example -->
 
-<div class="alert @StatusClass">@StatusMessage</div>
+
+<div class="alert @status.BootstrapAlertType mt-4" role="alert">
+    <b>@status.Title</b> @status.Message
+</div>
 
 <div class="col-md-6 offset-md-3 mt-5">
 
@@ -22,7 +26,7 @@
             <EditForm Model="@loginInfo" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator />
                 <div class="form-group">
-                    <label>Username</label>
+                    <label>Email</label>
                     <InputText @bind-Value="loginInfo.Username" class="form-control" />
                     <ValidationMessage For="@(() => loginInfo.Username)" />
                 </div>
@@ -31,16 +35,13 @@
                     <InputText @bind-Value="loginInfo.Password" type="password" class="form-control" />
                     <ValidationMessage For="@(() => loginInfo.Password)" />
                 </div>
-                <br />
-                <div style="padding-left: 1em">
-                    <button disabled="@loading" class="btn btn-primary">
-                        @if (loading)
-                        {
-                               <span class="spinner-border spinner-border-sm mr-1"></span>
-                        }
-                        Login
-                    </button>
-                </div>
+                <button disabled="@loading" class="btn btn-primary">
+                    @if (loading)
+                    {
+                            <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Login
+                </button>
             </EditForm>
         </div>
     </div>
@@ -56,17 +57,13 @@
     }
 
     private LoginInfo loginInfo = new ();
+    private StatusInfo status = new();
     private bool loading;
-
-    private string StatusClass = string.Empty;
-    private string StatusMessage = string.Empty;
 
     private void OnValidSubmit()
     {
         // reset alerts on submit
-        StatusClass = string.Empty;
-        StatusMessage = string.Empty;
-
+        status = new();
 
         loading = true;
 
@@ -74,8 +71,9 @@
             navigation.NavigateTo("/");
         else
         {
-            StatusClass = "alert-danger";
-            StatusMessage = "Oops! Could not authenticate login name and password.";
+            status.BootstrapAlertType = "alert-danger";
+            status.Title = "Oops! ";
+            status.Message = "Could not authenticate email and password.";
             loading = false;
         }
     }

@@ -16,18 +16,25 @@ namespace Stories.Shared.Models
 
         #region public properties
 
-                            public string   StoryId           { get; set; } = string.Empty;
-                            public DateTime DateCreated       { get; set; } = new DateTime();
+        public string StoryId { get; set; } = string.Empty;
 
-        [FirestoreProperty] public string   Title             { get; set; } = string.Empty;
+        public DateTime DateCreated { get; set; } = new DateTime();
 
-        [FirestoreProperty] public string   FirstParagraph    { get; set; } = string.Empty;
 
-                            public string   FullText          { get; set; } = string.Empty;
+        [FirestoreProperty] 
+        public string Title { get; set; } = string.Empty;
 
-        [FirestoreProperty] public int      NumberOfPageViews { get; set; } = 0;
+        [FirestoreProperty] 
+        public string FirstParagraph { get; set; } = string.Empty;
 
-        [FirestoreProperty] public int     NumberOfDownloads  { get; set; } = 0;
+        public string FullText { get; set; } = string.Empty;
+
+
+        [FirestoreProperty] 
+        public int NumberOfPageViews { get; set; } = 0;
+
+        [FirestoreProperty] 
+        public int NumberOfDownloads { get; set; } = 0;
 
 
         #endregion public properties

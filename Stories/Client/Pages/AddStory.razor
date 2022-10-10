@@ -12,24 +12,29 @@
 
 <h1>Add New Story</h1>
 
-<!-- todo: revisit the code block below -->
-@if (!string.IsNullOrEmpty(statusMessage))
+@if (!string.IsNullOrEmpty(status.Title))
 {
-    <div class="alert @bootstrapAlertType mt-4" role="alert">
+    <div class="alert @status.BootstrapAlertType mt-4" role="alert">
+        <b>@status.Title</b> @status.Message
 
-        <b>@statusTitle</b> @statusMessage
-
+        @if (@status.Title.Contains("Success"))
+        {
+            <span>. Click <a href ="/Story/@storyId">here</a> to view the story.</span>
+        }
     </div>
 }
 
-<p />
-
 <EditForm Model="@story" OnSubmit="@AddStoryAsync">
-
-    <InputText class="form-control" @bind-Value="story.Title" />
+    
+                <div class="form-group">
+    <label>Story Title</label>
+    <InputText class="form-control" @bind-Value="story.Title"/>
+    </div>
+    
+                <div class="form-group">
+    <label>Story Text</label>
     <InputTextArea class="form-control" @bind-Value="story.FullText" rows="20" maxlength="2000"/>
-
-    <br />
+    </div>
     <button class="btn btn-primary" type="submit">Add Story</button>
 </EditForm>
 
@@ -37,12 +42,10 @@
 @code {
 
     private StoryModel story = new();
+    private StatusInfo status = new();
 
-    string imgUrl = string.Empty;
-
-    string bootstrapAlertType = "alert-success";
-    string statusTitle   = string.Empty;
-    string statusMessage = string.Empty;
+    //string imgUrl = string.Empty;
+    private string storyId = string.Empty;
 
 
     private async Task AddStoryAsync()
@@ -71,17 +74,18 @@
                 throw new Exception();
             }
 
-            bootstrapAlertType = "alert-success";
-            statusTitle = "Success! ";
-            statusMessage = $"The story \"{story.Title}\" was added successfully.";
+            status.BootstrapAlertType = "alert-success";
+            status.Title = "Success! ";
+            status.Message = $"The story \"{story.Title}\" was added successfully";
+            storyId = story.StoryId;  // copy the id for the link
 
             story = new StoryModel();
         }
         catch (Exception)
         {
-            bootstrapAlertType = "alert-danger";
-            statusTitle = "Error: ";
-            statusMessage = "Oops, something went wrong.";
+            status.BootstrapAlertType = "alert-danger";
+            status.Title = "Error: ";
+            status.Message = "Oops, something went wrong.";
         }
     }
 }

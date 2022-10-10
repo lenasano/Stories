@@ -57,7 +57,7 @@ public class StoryFileController : ControllerBase
     {
         try
         {
-            await StoryFileAccessLayer.CreateStoryFilesFromText(story.StoryId, story.FullText);
+            await StoryFileAccessLayer.CreateStoryFilesFromText(story.StoryId, story);
 
             return Ok(new object());
         }
