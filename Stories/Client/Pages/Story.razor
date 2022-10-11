@@ -32,7 +32,7 @@ else
     <h1>@story.Title</h1>
 
     <p class="text-muted">by John</p>
-    <p class="text-muted">@story.DateCreated</p>
+    <p class="text-muted">@story.DateCreated.ToString("dddd, MMMM dd, yyyy")</p>
 
     <p>@story.FullText</p>
 
@@ -41,7 +41,7 @@ else
         <em style="color:steelblue; display:inline-block; align-self:flex-end">Click <a href="api/StoryFile/Image/@(StoryId)">here</a> to download this story as a PNG graphic.</em>
     </p>
     <p class="text-muted">
-        Hint: Right-click on the image to download it.
+        <em>Hint: Right-click on the image to download it.</em>
     </p>
 }
 
@@ -53,12 +53,12 @@ else
 
     StoryModel? story;
 
-
+    // todo: error handling
     protected override async Task OnInitializedAsync()
     {
         // load the stories and schema on different threads
         // this allows the two tasks to run in parallel, improving page loading speed
-        
+
         Task<StoryModel?> storyInfoTask = Task.Run(async () => { return await LoadStoryData();    });
         Task<string>      storyTextTask = Task.Run(async () => { return await LoadStoryText();    });
         Task              incrementTask = Task.Run(async () => { await IncrementStoryPageViews(); });
@@ -70,16 +70,6 @@ else
         if (story is not null) story.FullText = await storyTextTask;
 
         await incrementTask;
-
-        /* this is the simpler but maybe slower way:
-         
-        story = await LoadStoryData();
-        if (story is not null) story.FullText = await LoadStoryText();
-
-        await IncrementStoryPageViews();
-
-        */
-
     }
 
     private async Task<StoryModel?> LoadStoryData()
@@ -95,8 +85,12 @@ else
     }
 
     // update page views in firestore
-    private async Task IncrementStoryPageViews()
+    private async Task<int> IncrementStoryPageViews()
     {
-        await Task.Yield(); //story = await http.GetFromJsonAsync<List<StoryModel>>("api/StoryData") ?? new List<StoryModel>();
+        HttpResponseMessage firebaseResult = await http.PatchAsync($"api/StoryData/StoryViews/{StoryId}", null);
+
+        await firebaseResult.Content.ReadAsStringAsync();
+
+        return 1;
     }
 }

@@ -10,6 +10,19 @@ using Google.Cloud.Firestore;
 namespace Stories.Shared.Models
 {
     [FirestoreData]
+    public class StoryViewsAndDownloads
+    {
+        [FirestoreDocumentId]
+        public DateTime day { get; set; } = new DateTime();
+
+        [FirestoreProperty]
+        public int downloads { get; set; } = 0;
+
+        [FirestoreProperty]
+        public int views { get; set; } = 0;
+    }
+
+    [FirestoreData]
     public class StoryModel
     {
         const int FIRST_PARAGRAPH_MAX_LENGTH = 300;
@@ -28,14 +41,6 @@ namespace Stories.Shared.Models
         public string FirstParagraph { get; set; } = string.Empty;
 
         public string FullText { get; set; } = string.Empty;
-
-
-        [FirestoreProperty] 
-        public int NumberOfPageViews { get; set; } = 0;
-
-        [FirestoreProperty] 
-        public int NumberOfDownloads { get; set; } = 0;
-
 
         #endregion public properties
 
@@ -65,7 +70,7 @@ namespace Stories.Shared.Models
                     {
                         schemaTemplate = schemaTemplate.Replace(
                             $"{{{{{p.Name}}}}}",
-                            p.GetValue(this)?.ToString()
+                            p.PropertyType == typeof(DateTime) ? (p.GetValue(this) as DateTime?)?.ToString("dddd, MMMM dd, yyyy") : p.GetValue(this)?.ToString()
                             );
                     }
                 );

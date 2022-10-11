@@ -10,7 +10,7 @@
 
 @inject HttpClient http
 
-<h1>Add New Story</h1>
+<h2>Add New Story</h2>
 
 @if (!string.IsNullOrEmpty(status.Title))
 {
@@ -23,17 +23,19 @@
         }
     </div>
 }
+else
+{
+    <p></p>
+}
 
 <EditForm Model="@story" OnSubmit="@AddStoryAsync">
-    
-                <div class="form-group">
-    <label>Story Title</label>
-    <InputText class="form-control" @bind-Value="story.Title"/>
+    <div class="form-group">
+        <label>Story Title</label>
+        <InputText class="form-control" @bind-Value="story.Title"/>
     </div>
-    
-                <div class="form-group">
-    <label>Story Text</label>
-    <InputTextArea class="form-control" @bind-Value="story.FullText" rows="20" maxlength="2000"/>
+    <div class="form-group">
+        <label>Story Text</label>
+        <InputTextArea class="form-control" @bind-Value="story.FullText" rows="20" maxlength="2000"/>
     </div>
     <button class="btn btn-primary" type="submit">Add Story</button>
 </EditForm>
@@ -62,30 +64,31 @@
             HttpResponseMessage firebaseResult = await http.PostAsJsonAsync("api/StoryData", story);
 
             story.StoryId = await firebaseResult.Content.ReadAsStringAsync();
-            if (string.IsNullOrEmpty(story.StoryId)) throw new NullReferenceException();
+            story.DateCreated = DateTime.Today;                                 // no need to query firebase to get the specific story creation datetime, the day created is enough 
+
+            if (!firebaseResult.IsSuccessStatusCode) throw new Exception();
 
             HttpResponseMessage serverResult = await http.PostAsJsonAsync("api/StoryFile", story);
 
-            if (
-                   !firebaseResult.IsSuccessStatusCode
-                || !serverResult.IsSuccessStatusCode
-            )
-            {
-                throw new Exception();
-            }
+            if (!serverResult.IsSuccessStatusCode) throw new Exception();
 
-            status.BootstrapAlertType = "alert-success";
-            status.Title = "Success! ";
-            status.Message = $"The story \"{story.Title}\" was added successfully";
-            storyId = story.StoryId;  // copy the id for the link
+            status = new() {
+                BootstrapAlertType = "alert-success",
+                Title = "Success! ",
+                Message = $"The story \"{story.Title}\" was added successfully"
+            };
 
-            story = new StoryModel();
+            storyId = story.StoryId;    // copy the id for the link
+
+            story = new StoryModel();   // reset
         }
         catch (Exception)
         {
-            status.BootstrapAlertType = "alert-danger";
-            status.Title = "Error: ";
-            status.Message = "Oops, something went wrong.";
+            status = new() {
+                BootstrapAlertType = "alert-danger",
+                Title = "Error: ",
+                Message = "Oops, something went wrong."
+            };
         }
     }
 }

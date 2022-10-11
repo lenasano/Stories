@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Stories.Shared.Models;
 using Google.Cloud.Firestore;
 using System.Text.Json;
+using Stories.Client.Pages;
 
 namespace Stories.Server.DataAccess
 {
@@ -50,7 +52,7 @@ namespace Stories.Server.DataAccess
                         story.StoryId = storySnapshot.Id;
                         story.DateCreated = storySnapshot.CreateTime?.ToDateTime() ?? new DateTime();
 
-                        stories.Add(story);
+                        stories.Add(story);     // check that date created and storyid are populated
                     }
                 }
 
@@ -68,6 +70,7 @@ namespace Stories.Server.DataAccess
             {
                 CollectionReference stories = fireStoreDb.Collection("stories");
                 DocumentReference storyRef = await stories.AddAsync(story);
+
                 return storyRef.Id;
             }
             catch (Exception)
@@ -76,16 +79,21 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        public async Task UpdateStoryPageViewAsync()
+        public async Task<int> IncrementStoryPageViewAsync(string storyId)
         {
             try
             {
-                /*
-                DocumentReference storyDocument = fireStoreDb.Collection("stories").Document(story.StoryId);
-                await storyDocument.SetAsync(story, SetOptions.Overwrite);
-                */
+                // get or create a document for today's views and downloads
+                DocumentReference viewsDownloadsTodayRef = 
+                   fireStoreDb.Collection("stories").Document(storyId).Collection("ViewsDownloads").Document(DateTime.Today.ToString());
 
-                await Task.Delay(1);
+                // create or update the numberOfViews field in this document
+                WriteResult incrementViewsResult = await
+                    viewsDownloadsTodayRef.SetAsync(new Dictionary<string, object> { { "numberOfViews", FieldValue.Increment(1) } }, SetOptions.MergeAll);
+
+                string? s = incrementViewsResult?.ToString();
+
+                return 1;
             }
             catch (Exception)
             {
@@ -103,7 +111,9 @@ namespace Stories.Server.DataAccess
                 if (storySnapshot.Exists)
                 {
                     StoryModel story = storySnapshot.ConvertTo<StoryModel>();
+
                     story.StoryId = storySnapshot.Id;
+                    story.DateCreated = storySnapshot.CreateTime?.ToDateTime() ?? new DateTime();
 
                     return story;
                 }

@@ -25,6 +25,12 @@ namespace Stories.Server.Controllers
             return await storyDataAccess.GetStoryAsync(storyId);
         }
 
+        [HttpPatch("StoryViews/{storyId}")]
+        public async Task<int> IncrementStoryViewsAsync(string storyId)
+        {
+            return await storyDataAccess.IncrementStoryPageViewAsync(storyId);
+        }
+
         [HttpPost]
         public async Task<ActionResult> PostStoryAsync([FromBody] StoryModel story)
         {

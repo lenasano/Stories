@@ -27,13 +27,13 @@
                 <DataAnnotationsValidator />
                 <div class="form-group">
                     <label>Email</label>
-                    <InputText @bind-Value="loginInfo.Username" class="form-control" />
-                    <ValidationMessage For="@(() => loginInfo.Username)" />
+                    <InputText @bind-Value="loginInfo.Email" class="form-control" />
+                    <ValidationMessage For="@(() => loginInfo.Email)" style="font-size: smaller" />
                 </div>
                 <div class="form-group">
                     <label>Password</label>
                     <InputText @bind-Value="loginInfo.Password" type="password" class="form-control" />
-                    <ValidationMessage For="@(() => loginInfo.Password)" />
+                    <ValidationMessage For="@(() => loginInfo.Password)" style="font-size: smaller"/>
                 </div>
                 <button disabled="@loading" class="btn btn-primary">
                     @if (loading)
@@ -52,11 +52,11 @@
 @code {
     private class LoginInfo
     {
-        [Required] public string? Username { get; set; }
+        [Required] public string? Email { get; set; }
         [Required] public string? Password { get; set; }
     }
 
-    private LoginInfo loginInfo = new ();
+    private LoginInfo loginInfo = new();
     private StatusInfo status = new();
     private bool loading;
 
@@ -67,13 +67,16 @@
 
         loading = true;
 
-        if (authentication.MockSignIn(loginInfo.Username, loginInfo.Password))
+        if (authentication.MockSignIn(loginInfo.Email, loginInfo.Password))
             navigation.NavigateTo("/");
         else
         {
-            status.BootstrapAlertType = "alert-danger";
-            status.Title = "Oops! ";
-            status.Message = "Could not authenticate email and password.";
+            status = new() {
+                BootstrapAlertType = "alert-danger",
+                Title = "Oops! ",
+                Message = "Could not authenticate email and password."
+            };
+
             loading = false;
         }
     }
