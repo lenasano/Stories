@@ -38,7 +38,7 @@ else
 
     <p />
     <p>
-        <em style="color:steelblue; display:inline-block; align-self:flex-end">Click <a href="api/StoryFile/Image/@(StoryId)">here</a> to download this story as a PNG graphic.</em>
+        <em style="color:steelblue; display:inline-block; align-self:flex-end">Click <a href="api/StoryFile/Image/@(StoryId)" @onclick="@IncrementStoryDownloads">here</a> to download this story as a PNG graphic.</em>
     </p>
     <p class="text-muted">
         <em>Hint: Right-click on the image to download it.</em>
@@ -87,7 +87,17 @@ else
     // update page views in firestore
     private async Task<int> IncrementStoryPageViews()
     {
-        HttpResponseMessage firebaseResult = await http.PatchAsync($"api/StoryData/StoryViews/{StoryId}", null);
+        HttpResponseMessage firebaseResult = await http.PatchAsync($"api/StoryData/Views/{StoryId}", null);
+
+        await firebaseResult.Content.ReadAsStringAsync();
+
+        return 1;
+    }
+
+    // update page downloads in firestore
+    private async Task<int> IncrementStoryDownloads()
+    {
+        HttpResponseMessage firebaseResult = await http.PatchAsync($"api/StoryData/Downloads/{StoryId}", null);
 
         await firebaseResult.Content.ReadAsStringAsync();
 

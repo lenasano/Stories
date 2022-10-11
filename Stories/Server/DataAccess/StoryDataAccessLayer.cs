@@ -11,6 +11,11 @@ using Stories.Client.Pages;
 namespace Stories.Server.DataAccess
 {
     // connects to Firestore, Google's Cloud-hosted database
+    public enum StoryIncrementValues
+    {
+        NumberOfViews,
+        NumberOfDownloads
+    }
 
     public class StoryDataAccessLayer
     {
@@ -79,17 +84,17 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        public async Task<int> IncrementStoryPageViewAsync(string storyId)
+        public async Task<int> IncrementStoryDataAsync(string storyId, StoryIncrementValues incrementField)
         {
             try
             {
                 // get or create a document for today's views and downloads
                 DocumentReference viewsDownloadsTodayRef = 
-                   fireStoreDb.Collection("stories").Document(storyId).Collection("ViewsDownloads").Document(DateTime.Today.ToString());
+                   fireStoreDb.Collection("stories").Document(storyId).Collection("ViewsDownloads").Document(DateOnly.FromDateTime(DateTime.Today).ToString());
 
                 // create or update the numberOfViews field in this document
                 WriteResult incrementViewsResult = await
-                    viewsDownloadsTodayRef.SetAsync(new Dictionary<string, object> { { "numberOfViews", FieldValue.Increment(1) } }, SetOptions.MergeAll);
+                    viewsDownloadsTodayRef.SetAsync(new Dictionary<string, object> { { incrementField.ToString(), FieldValue.Increment(1) } }, SetOptions.MergeAll);
 
                 string? s = incrementViewsResult?.ToString();
 
