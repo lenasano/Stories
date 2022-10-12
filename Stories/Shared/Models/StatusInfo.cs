@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Stories.Shared.Models
 {
+    /// <summary>
+    /// Class for displaying error messages on razor pages.
+    /// </summary>
     public class StatusInfo
     {
         public string BootstrapAlertType { get; set; } = string.Empty;

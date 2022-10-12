@@ -32,17 +32,28 @@ else
     <h1>@story.Title</h1>
 
     <p class="text-muted">by John</p>
-    <p class="text-muted">@story.DateCreated.ToString("dddd, MMMM dd, yyyy")</p>
+    <p class="text-muted">@story.DateCreated.ToString("dddd, MMMM d, yyyy")</p>
 
     <p>@story.FullText</p>
 
     <p />
     <p>
         <em style="color:steelblue; display:inline-block; align-self:flex-end">Click <a href="api/StoryFile/Image/@(StoryId)" @onclick="@IncrementStoryDownloads">here</a> to download this story as a PNG graphic.</em>
+        <br />
+        <em style="font-size: smaller">Hint: Right-click on the image to download it.</em>
     </p>
-    <p class="text-muted">
-        <em>Hint: Right-click on the image to download it.</em>
-    </p>
+
+
+    @if(StoryStats is not null)
+    {
+        <CascadingValue Value="@StoryStats.NumberOfViews" Name="ViewsList">
+        <CascadingValue Value="@StoryStats.NumberOfDownloads" Name="DownloadsList">
+        <CascadingValue Value="@StoryStats.DateStrings" Name="DateStrings">
+            <StoryStatistics />
+        </CascadingValue>
+        </CascadingValue>
+        </CascadingValue>
+    }
 }
 
 
@@ -51,7 +62,8 @@ else
     [Parameter]
     public string? StoryId { get; set; }
 
-    StoryModel? story;
+    private StoryModel? story;
+    private StoryViewsDownloadsInfo? StoryStats;
 
     // todo: error handling
     protected override async Task OnInitializedAsync()
@@ -85,22 +97,15 @@ else
     }
 
     // update page views in firestore
-    private async Task<int> IncrementStoryPageViews()
+    private async Task IncrementStoryPageViews()
     {
-        HttpResponseMessage firebaseResult = await http.PatchAsync($"api/StoryData/Views/{StoryId}", null);
-
-        await firebaseResult.Content.ReadAsStringAsync();
-
-        return 1;
+        HttpResponseMessage incrementResult = await http.PatchAsync($"api/StoryData/Views/{StoryId}", null);
+        StoryStats = await http.GetFromJsonAsync<StoryViewsDownloadsInfo>($"api/StoryData/ViewsDownloads/{StoryId}");
     }
 
     // update page downloads in firestore
-    private async Task<int> IncrementStoryDownloads()
+    private async Task IncrementStoryDownloads()
     {
-        HttpResponseMessage firebaseResult = await http.PatchAsync($"api/StoryData/Downloads/{StoryId}", null);
-
-        await firebaseResult.Content.ReadAsStringAsync();
-
-        return 1;
+        HttpResponseMessage incrementResult = await http.PatchAsync($"api/StoryData/Downloads/{StoryId}", null);
     }
 }

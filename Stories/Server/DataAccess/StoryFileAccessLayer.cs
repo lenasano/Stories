@@ -103,7 +103,7 @@ namespace Stories.Server.DataAccess
                 Environment.NewLine,
                 story.Title,
                 "by John",
-                story.DateCreated.ToString("dddd, MMMM dd, yyyy") + Environment.NewLine,
+                story.DateCreated.ToString("dddd, MMMM d, yyyy") + Environment.NewLine,
                 story.FullText
             );
         }

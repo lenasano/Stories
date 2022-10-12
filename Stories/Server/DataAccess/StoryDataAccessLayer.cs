@@ -19,7 +19,7 @@ namespace Stories.Server.DataAccess
 
     public class StoryDataAccessLayer
     {
-        FirestoreDb fireStoreDb;
+        FirestoreDb firestoreDb;
         string projectId;
 
         public StoryDataAccessLayer()
@@ -32,14 +32,16 @@ namespace Stories.Server.DataAccess
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", filepath);
 
             projectId = "stories-23368";
-            fireStoreDb = FirestoreDb.Create(projectId);
+            firestoreDb = FirestoreDb.Create(projectId);
         }
+
+        #region functions to call retrieve, set, or update data in firebase
 
         public async Task<List<StoryModel>> GetAllStoriesAsync()
         {
             try
             {
-                Query storiesQuery = fireStoreDb.Collection("stories");
+                Query storiesQuery = firestoreDb.Collection("stories");
                 QuerySnapshot storiesQuerySnapshot = await storiesQuery.GetSnapshotAsync();
                  
                 List<StoryModel> stories = new List<StoryModel>();
@@ -69,48 +71,11 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        public async Task<string> AddStoryAsync(StoryModel story)
-        {
-            try
-            {
-                CollectionReference stories = fireStoreDb.Collection("stories");
-                DocumentReference storyRef = await stories.AddAsync(story);
-
-                return storyRef.Id;
-            }
-            catch (Exception)
-            {
-                throw new Exception();
-            }
-        }
-
-        public async Task<int> IncrementStoryDataAsync(string storyId, StoryIncrementValues incrementField)
-        {
-            try
-            {
-                // get or create a document for today's views and downloads
-                DocumentReference viewsDownloadsTodayRef = 
-                   fireStoreDb.Collection("stories").Document(storyId).Collection("ViewsDownloads").Document(DateOnly.FromDateTime(DateTime.Today).ToString());
-
-                // create or update the numberOfViews field in this document
-                WriteResult incrementViewsResult = await
-                    viewsDownloadsTodayRef.SetAsync(new Dictionary<string, object> { { incrementField.ToString(), FieldValue.Increment(1) } }, SetOptions.MergeAll);
-
-                string? s = incrementViewsResult?.ToString();
-
-                return 1;
-            }
-            catch (Exception)
-            {
-                throw new Exception();
-            }
-        }
-
         public async Task<StoryModel> GetStoryAsync(string storyId)
         {
             try
             {
-                DocumentReference storyDocument = fireStoreDb.Collection("stories").Document(storyId);
+                DocumentReference storyDocument = firestoreDb.Collection("stories").Document(storyId);
                 DocumentSnapshot storySnapshot = await storyDocument.GetSnapshotAsync();
 
                 if (storySnapshot.Exists)
@@ -133,18 +98,72 @@ namespace Stories.Server.DataAccess
             }
         }
 
-        /* deleting stories is not supported in our scenerio
-        public async void DeleteStory(string storyId)
+        public async Task<string> AddStoryAsync(StoryModel story)
         {
             try
             {
-                DocumentReference storyDocument = fireStoreDb.Collection("stories").Document(storyId);
-                await storyDocument.DeleteAsync();
+                CollectionReference stories = firestoreDb.Collection("stories");
+                DocumentReference storyRef = await stories.AddAsync(story);
+
+                return storyRef.Id;
             }
-            catch
+            catch (Exception)
             {
-                throw;
+                throw new Exception();
             }
-        }*/
+        }
+
+        public async Task IncrementStoryStatisticsAsync(string storyId, StoryIncrementValues incrementField)
+        {
+            try
+            {
+                string? today = DateOnly.FromDateTime(DateTime.Today).ToString();
+
+                // get or create a document for today's views and downloads
+                DocumentReference viewsDownloadsTodayRef = 
+                   firestoreDb.Collection("stories").Document(storyId).Collection("ViewsDownloads").Document(today);
+
+                // create or update the numberOfViews field in this document
+                WriteResult incrementViewsResult = await
+                    viewsDownloadsTodayRef.SetAsync(
+                        new Dictionary<string, object> {
+                            { incrementField.ToString(), FieldValue.Increment(1) },
+                            { "date", today }
+                        }, 
+                        SetOptions.MergeAll
+                    );
+            }
+            catch (Exception)
+            {
+                throw new Exception();
+            }
+        }
+
+        public async Task<StoryViewsDownloadsInfo> GetStoryStatisticsAsync(string storyId)
+        {
+            StoryViewsDownloadsInfo statistics = new();
+
+            Query storyStatisticsQuery = firestoreDb.Collection($"stories/{storyId}/ViewsDownloads").OrderBy("Date");   // no .Where() filter, so get all documents in the ViewDownloads collection
+            QuerySnapshot storyStatisticsSnapshot = await storyStatisticsQuery.GetSnapshotAsync();
+
+            foreach(DocumentSnapshot daysStatistics in storyStatisticsSnapshot.Documents)
+            {
+                double views = 0;
+                double downloads = 0;
+                string date = string.Empty;
+
+                daysStatistics.TryGetValue<double>(StoryIncrementValues.NumberOfViews.ToString(), out views);
+                daysStatistics.TryGetValue<double>(StoryIncrementValues.NumberOfDownloads.ToString(), out downloads);
+                daysStatistics.TryGetValue<string>("Date", out date);
+
+
+                statistics.NumberOfViews.Add(views);
+                statistics.NumberOfDownloads.Add(downloads);
+                statistics.DateStrings.Add(date);
+            }
+
+            return statistics;
+        }
+        #endregion functions to call retrieve, set, or update data in firebase
     }
 }

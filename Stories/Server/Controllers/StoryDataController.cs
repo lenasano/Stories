@@ -25,16 +25,22 @@ namespace Stories.Server.Controllers
             return await storyDataAccess.GetStoryAsync(storyId);
         }
 
-        [HttpPatch("Views/{storyId}")]
-        public async Task<int> IncrementStoryViewsAsync(string storyId)
+        [HttpGet("ViewsDownloads/{StoryId}")]
+        public async Task<StoryViewsDownloadsInfo> GetStoryViewsDownloadsAsync(string storyId)
         {
-            return await storyDataAccess.IncrementStoryDataAsync(storyId, StoryIncrementValues.NumberOfViews);
+            return await storyDataAccess.GetStoryStatisticsAsync(storyId);
+        }
+
+        [HttpPatch("Views/{storyId}")]
+        public async Task IncrementStoryViewsAsync(string storyId)
+        {
+            await storyDataAccess.IncrementStoryStatisticsAsync(storyId, StoryIncrementValues.NumberOfViews);
         }
 
         [HttpPatch("Downloads/{storyId}")]
-        public async Task<int> IncrementStoryDownloadsAsync(string storyId)
+        public async Task IncrementStoryDownloadsAsync(string storyId)
         {
-            return await storyDataAccess.IncrementStoryDataAsync(storyId, StoryIncrementValues.NumberOfDownloads);
+            await storyDataAccess.IncrementStoryStatisticsAsync(storyId, StoryIncrementValues.NumberOfDownloads);
         }
 
         [HttpPost]

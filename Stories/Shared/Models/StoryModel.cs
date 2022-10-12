@@ -9,17 +9,13 @@ using Google.Cloud.Firestore;
 
 namespace Stories.Shared.Models
 {
-    [FirestoreData]
-    public class StoryViewsAndDownloads
+    public class StoryViewsDownloadsInfo
     {
-        [FirestoreDocumentId]
-        public DateTime day { get; set; } = new DateTime();
+        public List<string> DateStrings { get; set; } = new();
 
-        [FirestoreProperty]
-        public int downloads { get; set; } = 0;
+        public List<double> NumberOfDownloads { get; set; } = new();
 
-        [FirestoreProperty]
-        public int views { get; set; } = 0;
+        public List<double> NumberOfViews { get; set; } = new();
     }
 
     [FirestoreData]
@@ -70,7 +66,7 @@ namespace Stories.Shared.Models
                     {
                         schemaTemplate = schemaTemplate.Replace(
                             $"{{{{{p.Name}}}}}",
-                            p.PropertyType == typeof(DateTime) ? (p.GetValue(this) as DateTime?)?.ToString("dddd, MMMM dd, yyyy") : p.GetValue(this)?.ToString()
+                            p.PropertyType == typeof(DateTime) ? (p.GetValue(this) as DateTime?)?.ToString("dddd, MMMM d, yyyy") : p.GetValue(this)?.ToString()
                             );
                     }
                 );
