@@ -32,15 +32,33 @@ namespace Stories.Server.Controllers
         }
 
         [HttpPatch("Views/{storyId}")]
-        public async Task IncrementStoryViewsAsync(string storyId)
+        public async Task<ActionResult> IncrementStoryViewsAsync(string storyId)
         {
-            await storyDataAccess.IncrementStoryStatisticsAsync(storyId, StoryIncrementValues.NumberOfViews);
+            try
+            {
+                await storyDataAccess.IncrementStoryStatisticsAsync(storyId, StoryIncrementValues.NumberOfViews);
+
+                return Ok(new object());
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpPatch("Downloads/{storyId}")]
-        public async Task IncrementStoryDownloadsAsync(string storyId)
+        public async Task<ActionResult> IncrementStoryDownloadsAsync(string storyId)
         {
-            await storyDataAccess.IncrementStoryStatisticsAsync(storyId, StoryIncrementValues.NumberOfDownloads);
+            try
+            {
+                await storyDataAccess.IncrementStoryStatisticsAsync(storyId, StoryIncrementValues.NumberOfDownloads);
+
+                return Ok(new object());
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpPost]

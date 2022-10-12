@@ -128,7 +128,7 @@ namespace Stories.Server.DataAccess
                     viewsDownloadsTodayRef.SetAsync(
                         new Dictionary<string, object> {
                             { incrementField.ToString(), FieldValue.Increment(1) },
-                            { "date", today }
+                            { "Date", today }
                         }, 
                         SetOptions.MergeAll
                     );

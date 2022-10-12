@@ -45,11 +45,19 @@ public class StoryFileController : ControllerBase
     [HttpGet("Image/{storyId}")]
     public IActionResult GetStoryImage(string storyId)
     {
-        if (string.IsNullOrEmpty(storyId)) throw new InvalidOperationException();
+        try
+        {
+            if (string.IsNullOrEmpty(storyId)) throw new InvalidOperationException();
 
-        Stream imageStream = StoryFileAccessLayer.GetStoryImageFile(storyId);
+            Stream imageStream = StoryFileAccessLayer.GetStoryImageFile(storyId);
 
-        return File(imageStream, "image/png");
+            return File(imageStream, "image/png");
+
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
     }
 
     [HttpPost]

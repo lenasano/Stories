@@ -92,13 +92,10 @@
 
     private double Xpos(int x)
     {
-        return 70.0 + x * (GraphWidth / (ValuesPrimary.Count - 1));
+        return ValuesPrimary.Count > 1 ? 70.0 + x * (GraphWidth / (ValuesPrimary.Count - 1)) : GraphWidth / 2.0;
     }
 
-    private double Ypos(double y)
-    {
-        return ZeroY - y * (GraphHeight / GraphRange);
-    }
+    private double Ypos(double y) => ZeroY - y * (GraphHeight / GraphRange);
 
     // Convert Values to a list of coordinates for the polyline SVG element
     private string PointList =>
