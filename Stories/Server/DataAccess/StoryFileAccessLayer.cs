@@ -128,8 +128,6 @@ namespace Stories.Server.DataAccess
             // Measure string.
             SizeF stringSize = g.MeasureString(wrappedString, font) + new Size(20, 20);
 
-
-            //bitmap.Dispose();   // todo: not needed?
             g.Dispose();
 
 
@@ -151,9 +149,7 @@ namespace Stories.Server.DataAccess
 
             bitmap.Save(Path.Combine(Environment.CurrentDirectory, path, $"{filename}.png"), f);
 
-
-            //p.Dispose();
-            //bitmap.Dispose();
+            p.Dispose();
             g.Dispose();
         }
 

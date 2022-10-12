@@ -10,6 +10,12 @@
 
 @inject HttpClient http
 
+@if (!string.IsNullOrEmpty(status.Message))
+{
+    <div class="alert @status.BootstrapAlertType mt-4" role="alert">
+        <b>@status.Title</b> @status.Message
+    </div>
+}
 
 @if ( story is null )
 {
@@ -65,23 +71,36 @@ else
     private StoryModel? story;
     private StoryViewsDownloadsInfo? StoryStats;
 
-    // todo: error handling
+    private StatusInfo status = new();
+
     protected override async Task OnInitializedAsync()
     {
-        // load the stories and schema on different threads
-        // this allows the two tasks to run in parallel, improving page loading speed
+        try
+        {
+            // load the stories and schema on different threads
+            // this allows the two tasks to run in parallel, improving page loading speed
 
-        Task<StoryModel?> storyInfoTask = Task.Run(async () => { return await LoadStoryData();    });
-        Task<string>      storyTextTask = Task.Run(async () => { return await LoadStoryText();    });
-        Task              incrementTask = Task.Run(async () => { await IncrementStoryPageViews(); });
+            Task<StoryModel?> storyInfoTask = Task.Run(async () => { return await LoadStoryData(); });
+            Task<string> storyTextTask = Task.Run(async () => { return await LoadStoryText(); });
+            Task incrementTask = Task.Run(async () => { await IncrementStoryPageViews(); });
 
-        // now make sure both Tasks are complete before exiting the function
+            // now make sure both Tasks are complete before exiting the function
 
-        story = await storyInfoTask;
+            story = await storyInfoTask;
 
-        if (story is not null) story.FullText = await storyTextTask;
+            if (story is not null) story.FullText = await storyTextTask;
 
-        await incrementTask;
+            await incrementTask;
+        }
+        catch(Exception)
+        {
+            status = new()
+                {
+                    BootstrapAlertType = "alert-danger",
+                    Title = "Oops! ",
+                    Message = "Error loading story content and details."
+                };
+        }
     }
 
     private async Task<StoryModel?> LoadStoryData()
