@@ -1,0 +1,16 @@
+Purpose
+The purpose of this challenge is to gather further evidence of the true abilities and qualifications of potential candidates for employment in Crawford Technologies software engineering division than would normally be possible via a simple interview.  
+
+The prospective employee is asked to take the enclosed project requirements and return to Crawford a functionally complete, working piece of software, for review by Crawford Technologies Management and Technical staff. Crawford?s staff will use this to evaluate the design decisions made by the prospective employee, as well as the craftsmanship and quality of the code and the project returned.  This project will have a significant impact on the applicant selection process. Please take this opportunity to demonstrate for Crawford Technologies your skills in software engineering.
+The Challenge
+John enjoys writing stories and sharing them with his friend Pat. Pat thinks his writing should be preserved for others to see and enjoy. To this end, s/he has decided to build a website devoted to storing and preserving the stories for others to see. In addition, Pat would like this website to return a copy of his writing embedded in a graphic (*.png) image. This embedded image should display the stories enclosed in a rectangular box. (note, you do not need to write stories, you just need to show your ability with brief text paragraphs.) Pat also wants to track how popular the different stories are, so she is going to log story views and downloads. S/he will add a simple chart to each story?s page to show the data.
+These are Pat?s requirements.
+1) Web site for stories
+2) Ability to submit and display stories 
+3) Ability to download a graphic (*.png) with stories embedded
+4) log views and downloads
+5) Display a simple filtered chart of views and downloads over time
+
+
+Deliverables:
+The applicant should return their implementation of the above to Crawford Technologies along with any installation instructions necessary to ins
