@@ -24,14 +24,22 @@
     source: https://github.com/martijn/BlazorCharts
 -->
 
-
-
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 @(GraphWidth + 100) @GraphHeight">
     <g stroke="gray" text-anchor="end">
-        <text x="20" y="@ZeroY">0</text>
-        <text x="20" y="15">@Max</text>
-        <line x1="50" x2="50" y1="0" y2="@GraphHeight"/>
-        <line x1="50" x2="@(GraphWidth + 50)" y1="@ZeroY" y2="@ZeroY"/>
+        <text x="60" y="15" style="font-size: x-small; color: gray">@Max</text>
+        <line x1="70" x2="70" y1="10" y2="@ZeroY" />
+        <line x1="70" x2="@(GraphWidth + 68)" y1="@ZeroY" y2="@ZeroY"/>
+    </g>
+
+
+    <g stroke="darkblue" text-anchor="end">
+        <text class="outline" x="60" y="@(Ypos(ValuesPrimary[0]))">Downloads</text>
+        <text x="60" y="@(Ypos(ValuesPrimary[0]))" style="font-size: x-small">Downloads</text>
+    </g>
+    
+    <g stroke="steelblue" text-anchor="end">
+        <text class="outline" x="60" y="@(Ypos(ValuesSecondary[0]))">Views</text>
+        <text x="60" y="@(Ypos(ValuesSecondary[0]))" style="font-size: x-small">Views</text>
     </g>
 
     <g>
@@ -56,17 +64,16 @@
     @if (_selectedPoint != null)
     {
         <g text-anchor="middle">
-            <text class="outline" x=@(Xpos(_selectedPoint.Value)) y=@(Ypos(ValuesPrimary[_selectedPoint.Value]) + 20)>@SelectedPointInfo</text>
-            <text x=@(Xpos(_selectedPoint.Value)) y=@(Ypos(ValuesPrimary[_selectedPoint.Value]) + 20)>@SelectedPointInfo</text>
+            <text x=@(Xpos(_selectedPoint.Value)) y=@(ZeroY + 12) style="font-size: x-small; font-weight: bold">@SelectedPointInfo</text>
         </g>
     }
 </svg>
 
 @code {
-    [CascadingParameter(Name = "ViewsList")]
+    [CascadingParameter(Name = "DownloadsList")]
     public List<double> ValuesPrimary { get; set; } = new();
 
-    [CascadingParameter(Name = "DownloadsList")]
+    [CascadingParameter(Name = "ViewsList")]
     public List<double> ValuesSecondary { get; set; } = new();
 
     [CascadingParameter(Name = "DateStrings")]
@@ -85,7 +92,7 @@
 
     private double Xpos(int x)
     {
-        return 50.0 + x * (GraphWidth / (ValuesPrimary.Count - 1));
+        return 70.0 + x * (GraphWidth / (ValuesPrimary.Count - 1));
     }
 
     private double Ypos(double y)

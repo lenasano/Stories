@@ -159,7 +159,7 @@ namespace Stories.Server.DataAccess
 
                 statistics.NumberOfViews.Add(views);
                 statistics.NumberOfDownloads.Add(downloads);
-                statistics.DateStrings.Add(date);
+                statistics.DateStrings.Add(DateTime.Parse(date).ToString("MMM d"));
             }
 
             return statistics;
