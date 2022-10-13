@@ -37,11 +37,19 @@ else
         <label>Story Text</label>
         <InputTextArea class="form-control" @bind-Value="story.FullText" rows="20" maxlength="2000"/>
     </div>
-    <button class="btn btn-primary" type="submit">Add Story</button>
+    <button class="btn btn-primary" type="submit" disabled="@loading">
+        @if (loading)
+        {
+            <span class="spinner-border spinner-border-sm mr-1"></span>
+        }
+        Add Story
+    </button>
 </EditForm>
 
 
 @code {
+
+    private bool loading;
 
     private StoryModel story = new();
     private StatusInfo status = new();
@@ -52,6 +60,8 @@ else
 
     private async Task AddStoryAsync()
     {
+        loading = true;
+
         if (string.IsNullOrEmpty(story.FullText)) return;
 
         story.Title    = story.Title   .Trim();
@@ -89,6 +99,10 @@ else
                 Title = "Error: ",
                 Message = "Oops, something went wrong."
             };
+        }
+        finally
+        {
+            loading = false;
         }
     }
 }

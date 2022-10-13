@@ -24,6 +24,16 @@
     source: https://github.com/martijn/BlazorCharts
 -->
 
+<div class="container">
+     <div class="row justify-content-md-center">
+        <div class="col-9"/>
+        <div class="col">
+            <p><label><input type="checkbox" @bind="ShowViews" style="font-size: smaller"/> Views</label>
+            <br /><label><input type="checkbox" @bind="ShowDownloads" style="font-size: smaller" /> Downloads</label></p>
+        </div>
+    </div>
+</div>
+
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 @(GraphWidth + 100) @GraphHeight">
     <g stroke="gray" text-anchor="end">
         <text x="60" y="15" style="font-size: x-small; color: gray">@Max</text>
@@ -31,34 +41,50 @@
         <line x1="70" x2="@(GraphWidth + 68)" y1="@ZeroY" y2="@ZeroY"/>
     </g>
 
-
-    <g stroke="darkblue" text-anchor="end">
-        <text class="outline" x="60" y="@(Ypos(ValuesPrimary[0]))">Downloads</text>
-        <text x="60" y="@(Ypos(ValuesPrimary[0]))" style="font-size: x-small">Downloads</text>
-    </g>
-    
-    <g stroke="steelblue" text-anchor="end">
-        <text class="outline" x="60" y="@(Ypos(ValuesSecondary[0]))">Views</text>
-        <text x="60" y="@(Ypos(ValuesSecondary[0]))" style="font-size: x-small">Views</text>
-    </g>
-
-    <g>
-        <polyline stroke="darkblue"  fill="none" stroke-width="3" points="@PointList" />
-        <polyline stroke="steelblue" fill="none" stroke-width="3" points="@PointListSecondary" />
-    </g>
-
-    @foreach (var (x, y) in ValuesPrimary.Select((value, index) => (index, value)))
+    @if (ShowDownloads)
     {
-        <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="4" fill=@(x == _selectedPoint ? "lightblue" : "black")/>
-        @* Render a transparent circle with a larger radius to provide a proper hitbox *@
-        <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="20" fill="transparent" @onclick=@(_ => _selectedPoint = x)/>
+        <g stroke="darkblue" text-anchor="end">
+            <text class="outline" x="60" y="@(Ypos(ValuesPrimary[0]))">Downloads</text>
+            <text x="60" y="@(Ypos(ValuesPrimary[0]))" style="font-size: x-small">Downloads</text>
+        </g>
+    }
+    @if (ShowViews)
+    {
+        <g stroke="steelblue" text-anchor="end">
+            <text class="outline" x="60" y="@(Ypos(ValuesSecondary[0]))">Views</text>
+            <text x="60" y="@(Ypos(ValuesSecondary[0]))" style="font-size: x-small">Views</text>
+        </g>
+    }
+    <g>
+        @if (ShowDownloads)
+        {
+            <polyline stroke="darkblue"  fill="none" stroke-width="3" points="@PointList" />
+        }
+        @if (ShowViews)
+        {
+            <polyline stroke="steelblue" fill="none" stroke-width="3" points="@PointListSecondary" />
+        }
+    </g>
+
+    @if (ShowDownloads)
+    {
+        @foreach (var (x, y) in ValuesPrimary.Select((value, index) => (index, value)))
+        {
+            <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="4" fill=@(x == _selectedPoint ? "lightblue" : "black")/>
+            @* Render a transparent circle with a larger radius to provide a proper hitbox *@
+            <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="20" fill="transparent" @onclick=@(_ => _selectedPoint = x)/>
+        }
     }
 
-    @foreach (var (x, y) in ValuesSecondary.Select((value, index) => (index, value)))
+    @if (ShowViews)
     {
-        <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="4" fill=@(x == _selectedPoint ? "lightblue" : "black")/>
-        @* Render a transparent circle with a larger radius to provide a proper hitbox *@
-        <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="20" fill="transparent" @onclick=@(_ => _selectedPoint = x)/>
+        @foreach (var (x, y) in ValuesSecondary.Select((value, index) => (index, value)))
+        {
+            <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="4" fill=@(x == _selectedPoint ? "lightblue" : "black")/>
+            @* Render a transparent circle with a larger radius to provide a proper hitbox *@
+            <circle cx=@(Xpos(x)) cy=@(Ypos(y)) r="20" fill="transparent" @onclick=@(_ => _selectedPoint = x)/>
+        }
+
     }
 
     @if (_selectedPoint != null)
@@ -70,6 +96,10 @@
 </svg>
 
 @code {
+
+    private bool ShowDownloads = true;
+    private bool ShowViews = true;
+
     [CascadingParameter(Name = "DownloadsList")]
     public List<double> ValuesPrimary { get; set; } = new();
 
@@ -92,7 +122,7 @@
 
     private double Xpos(int x)
     {
-        return ValuesPrimary.Count > 1 ? 70.0 + x * (GraphWidth / (ValuesPrimary.Count - 1)) : GraphWidth / 2.0;
+        return ValuesPrimary.Count > 1 ? 70.0 + x * (GraphWidth / (ValuesPrimary.Count - 1)) : 70 + GraphWidth / 2.0;
     }
 
     private double Ypos(double y) => ZeroY - y * (GraphHeight / GraphRange);

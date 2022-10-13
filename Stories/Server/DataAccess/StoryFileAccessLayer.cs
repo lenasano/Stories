@@ -21,7 +21,7 @@ namespace Stories.Server.DataAccess
             string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDERNAME);
 
             if (!Directory.Exists(uploadFolder))
-                Directory.CreateDirectory(uploadFolder);    // todo: make sure this dir has no execute permissions, and that files inherit this parent dir's permissions
+                Directory.CreateDirectory(uploadFolder);    // todo: when deploying website to IIS, make sure this dir has no execute permissions, and that files inherit this parent dir's permissions
 
             if (story.FullText.Length > 0)
             {
@@ -107,8 +107,6 @@ namespace Stories.Server.DataAccess
                 story.FullText
             );
         }
-
-        // TODO: consider converting this function to async
 
         private static void SaveTextAsImage(string text, string filename, string path, ImageFormat f)
         {
@@ -201,7 +199,7 @@ namespace Stories.Server.DataAccess
             }
 
             // estimate the end position for the current line (for a size 20 font, divide by 7)
-            int end = start + (width / 7);                                  // overestinate the number of chars in the next line of text ... todo: text with different font sizes
+            int end = start + (width / 7);                                  // overestinate the number of chars in the next line of text ... todo: try text with different font sizes
 
             end = end < original.Length ? end : original.Length - 1;        // in the last iteration, we need to adjust in case we are over the string length
 

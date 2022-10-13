@@ -37,8 +37,8 @@ else
 {
     <h1>@story.Title</h1>
 
-    <p class="text-muted">by John</p>
-    <p class="text-muted">@story.DateCreated.ToString("dddd, MMMM d, yyyy")</p>
+    <p class="text-muted">by John
+    <br /><em>@story.DateCreated.ToString("dddd, MMMM d, yyyy")</em></p>
 
     <p>@story.FullText</p>
 
@@ -111,6 +111,8 @@ else
     private async Task<string> LoadStoryText()
     {
         HttpResponseMessage result = await http.GetAsync($"api/StoryFile/{StoryId}");
+
+        if (!result.IsSuccessStatusCode) throw new InvalidOperationException();     // prevent writing exception info to story.FullText, which is displayed on the page
 
         return await result.Content.ReadAsStringAsync();
     }
