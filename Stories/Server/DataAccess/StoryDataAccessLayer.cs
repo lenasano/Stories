@@ -27,11 +27,12 @@ namespace Stories.Server.DataAccess
             string filepath = 
                 Path.Combine(
                     Directory.GetCurrentDirectory(),
-                    "PUT YOUR PROJECT SERVICE ACCOUNT KEY JSON FILE HERE" // https://cloud.google.com/iam/docs/creating-managing-service-account-keys
+                    "PUT YOUR PROJECT SERVICE ACCOUNT KEY JSON FILE HERE"   // for generating your json file, see https://cloud.google.com/iam/docs/creating-managing-service-account-keys
                 );
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", filepath);
 
-            projectId = "PUT YOUR PROJECT ID HERE"; // you will see your Project ID at: Firebase console | click on your project | Project Overview | Project settings https://console.firebase.google.com/u/1/
+            projectId = "PUT YOUR PROJECT ID HERE";     // you will see your Project ID at: Firebase console | click on your project | Project Overview | Project settings
+                                                        // https://console.firebase.google.com/u/1/
             firestoreDb = FirestoreDb.Create(projectId);
         }
 
