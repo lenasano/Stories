@@ -1,5 +1,5 @@
 # Blazor ASP.NET website with Adaptive Cards for uploading text files
-This is the result of a three week personal C# coding sprint, to creating website with text uploading, image conversion and downloading, and page view logging.
+This is the result of a three week C# coding sprint, to create a website with text uploading, image conversion and downloading, and page view logging.
 
 The website is implemented as a Blazor WebAssembly (WASM) app, with an Asp.NET Core server backend. The C# code is written using Visual Studio 2022 in .NET 6.
 
