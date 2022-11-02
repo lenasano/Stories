@@ -47,7 +47,7 @@ The AdaptiveCardsBlazor library is not fully supported for Blazor Webassembly, s
 
 ### SVG Adaptive Images
 
-SVG is a vector graphics format that is based on XML, this makes it dynamic and responsive within a razor page. In the project, each story's statistics are loaded into and displayed as a line chart within an SVG graphic. Code for the SVG graphic is adapted from https://github.com/martijn/BlazorCharts, with a tip of the hat to @martijn.
+SVG is a vector graphics format that is based on XML, this makes it dynamic and responsive within a razor page. In the project, each story's statistics are loaded into and displayed as a line chart within an SVG graphic. Code for the SVG graphic is adapted from https://github.com/martijn/BlazorCharts, with an appreciative tip of the hat to Martijn Storck.
 
 ## Not implemented
 
